@@ -5,6 +5,7 @@ const app=express();
 
 
 const authRoute =require('./Routes/Auth')
+const profileEdit =require('./Routes/profileEdit')
 require('./config/connexions');
 
 
@@ -24,3 +25,4 @@ app.listen(3001,()=>{
 });
 
 app.use('/api',authRoute)
+app.use('/user',profileEdit)
