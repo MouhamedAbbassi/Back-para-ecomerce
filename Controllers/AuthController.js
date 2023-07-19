@@ -1,3 +1,4 @@
+
 const User = require('../Models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -34,7 +35,6 @@ const express = require('express');
  const login = (req, res, next) => {
   var username = req.body.username;
   var password = req.body.password;
-  console.log(username,password);
 
   User.findOne({ $or: [{ email: username }, { phone: username }] })
     .then(user => {
