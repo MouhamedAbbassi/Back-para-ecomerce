@@ -1,20 +1,49 @@
- const mongoose = require('mongoose');
-const Schema =mongoose.Schema 
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
   name: {
-    type: String
+    type: String,
   },
-  email:{
-    type: String
+  email: {
+    type: String,
+    unique: true,
   },
   password: {
-    type: String
+    type: String,
   },
-  phone:{
-    type: String
-  }
-},{timestamps: true})
+  phone: {
+    type: String,
+  },
+  role: {
+    type: String,
+  },
+}, { timestamps: true });
 
-const user =mongoose.model('User',userSchema)
-module.exports = user
+const UserModel = mongoose.model('User', userSchema);
+
+class User {
+  constructor(name, email, password, phone) {
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.phone = phone;
+    this.role = null;
+  }
+
+  async register() {
+    try {
+
+      const hashedPass = await bcrypt.hash(this.password, 10);
+      this.password = hashedPass;
+      return await this.save();
+    } catch (error) {
+      throw error;
+    }
+  }
+}
+
+module.exports = {
+  User: UserModel,
+  UserClass: User,
+};

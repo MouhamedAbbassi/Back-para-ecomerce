@@ -52,7 +52,7 @@ const updatePassword = async (req, res) => {
   const { id } = req.params; // the user ID as a URL parameter
   const { oldPassword, newPassword, newPasswordConfirm } = req.body;
 
-  // if new passwords match
+  // if new passwords doesn't match
   if (newPassword !== newPasswordConfirm) {
     return res.status(400).json({ message: 'New passwords do not match' });
   }
