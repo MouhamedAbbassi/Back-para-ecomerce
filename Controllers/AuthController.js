@@ -1,11 +1,12 @@
 
-const User = require('../Models/User');
+const { User } = require('../Models/User'); 
 const Client = require('../Models/Client'); 
 const Fournisseurs = require('../Models/Fournisseurs'); 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const express = require('express');
 
+///////////////////REGISTER CLIENT//////////////////
 const registerC = (req, res, next) => {
   const { name, email, password, phone } = req.body;
   const client = new Client({
@@ -23,7 +24,7 @@ const registerC = (req, res, next) => {
       res.json({ message: 'An error occurred', error });
     });
 };
-
+///////////////////REGISTER FOURNISSEUR//////////////////
 const registerF = (req, res, next) => {
   const { name, email, password, phone } = req.body;
   const Fournisseur = new Fournisseurs({
@@ -42,7 +43,7 @@ const registerF = (req, res, next) => {
     });
 };
 
-
+///////////////////LOGIN//////////////////
  const login = (req, res, next) => {
   var username = req.body.username;
   var password = req.body.password;
@@ -60,12 +61,9 @@ const registerF = (req, res, next) => {
               token
             });
           } else {
-            res.json({message: 'Password does not matched'});
-          }
+            res.json({message: 'Password does not matched'});}
         });
-      } else {
-        res.json({message: 'No user found!'});
-      }
+      } else {res.json({message: 'No user found!'});}
     })
     .catch(err => {console.log(err);
       res.json({message: err});
