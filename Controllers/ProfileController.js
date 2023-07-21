@@ -1,17 +1,16 @@
-const User = require('../Models/User');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const express = require('express');
-
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import express from 'express';
+import User from '../Models/User.js';
+import mongoose from 'mongoose';
 
 /////////////////////////////////////////////////////////////////
 //////////////////////// UPDATE /////////////////////////////////
 /////////////////////////////////////////////////////////////////
 
-async function updateUser(req, res) {
-
+export async function updateUser(req, res) {
   const { id } = req.params; // the user ID as a URL parameter
-  const { name, email,phone } = req.body; //updated user data in the request body
+  const { name, email, phone } = req.body; //updated user data in the request body
   try {
     // Retrieve the user from the database
     const user = await User.findById(id);
@@ -34,25 +33,27 @@ async function updateUser(req, res) {
     res.status(500).json({ error: 'Failed to update user' });
   }
 }
+
 /////////////////////////////////////////////////////////////////
 ////////////////////////CHECK OLD PASSWORD///////////////////////
 /////////////////////////////////////////////////////////////////
 
-const checkOldPassword = async (enteredPassword, hashedPassword) => {
-
+export async function checkOldPassword(enteredPassword, hashedPassword) {
   const isMatch = await bcrypt.compare(enteredPassword, hashedPassword);
   return isMatch;
+}
 
-};
 /////////////////////////////////////////////////////////////////
 ////////////////////////UPDATE PASSWORD//////////////////////////
 /////////////////////////////////////////////////////////////////
 
-const updatePassword = async (req, res) => {
+export async function updatePassword(req, res) {
   const { id } = req.params; // the user ID as a URL parameter
   const { oldPassword, newPassword, newPasswordConfirm } = req.body;
-
-  // if new passwords doesn't match
+ console.log(id)
+ if (!mongoose.Types.ObjectId.isValid(id)) 
+ return res.status(404).json({ msg: `No task with id :${id}` });
+  // if new passwords don't match
   if (newPassword !== newPasswordConfirm) {
     return res.status(400).json({ message: 'New passwords do not match' });
   }
@@ -70,18 +71,13 @@ const updatePassword = async (req, res) => {
     const salt = await bcrypt.genSalt(10); // salt generation
     const hashedPassword = await bcrypt.hash(newPassword, salt); // Hash the new password
 
-    // Update the user's password in the database
-    await User.findByIdAndUpdate(id, { password: hashedPassword });
+     await User.updateOne({ password: hashedPassword });
+
+
 
     return res.status(200).json({ message: 'Password updated successfully' });
   } catch (error) {
     console.error('Error updating password:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: error });
   }
-};
-
-
-
- module.exports={
-  updateUser,updatePassword
 }

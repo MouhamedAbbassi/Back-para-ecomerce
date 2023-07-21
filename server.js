@@ -1,29 +1,21 @@
-const morgan      =require('morgan')
-const bodyParser  =require('body-parser')
-const express=require('express');
-const app=express();
-require('./config/connexions');
-const cookieParser = require("cookie-parser");
- 
+import morgan from 'morgan';
+import express from 'express';
+import cookieParser from 'cookie-parser'; // Add the correct import for cookie-parser
+import('./config/connexions.js'); // Make sure this import is valid and points to the correct file
 
+import authRoute from './Routes/Auth.js';
+import profileEdit from './Routes/profileEdit.js'; // Correct the import statement to use 'profileEdit' directly
 
+const app = express();
 
-const authRoute =require('./Routes/Auth')
-const profileEdit =require('./Routes/profileEdit')
-
-
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
- 
 
+app.use('/api', authRoute);
+app.use('/user', profileEdit);
 
-app.use('/api',authRoute)
-app.use('/user',profileEdit)
-//app.get("/basic", userAuth, (req, res) => res.render("user"))
-
-
-
-
-
-app.listen(3001,()=>{console.log('server runing ');});
-
+const PORT = 3001;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

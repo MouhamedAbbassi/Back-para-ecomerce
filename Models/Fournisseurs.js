@@ -1,6 +1,5 @@
-
-const { User, UserClass } = require('./User');
-const bcrypt = require('bcrypt');
+import bcrypt from 'bcrypt';
+import  User from './User.js';
 
 class Fournisseur extends User {
   constructor(name, email, password, phone) {
@@ -22,4 +21,4 @@ class Fournisseur extends User {
   }
 }
 
-module.exports = Fournisseur;
+export default  Fournisseur;

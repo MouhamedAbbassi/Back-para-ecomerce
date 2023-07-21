@@ -1,5 +1,8 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
+import validators from 'validator';
+
+const { Schema } = mongoose;
 
 const userSchema = new Schema({
   name: {
@@ -7,16 +10,17 @@ const userSchema = new Schema({
   },
   email: {
     type: String,
-    unique: true,
-    required: true,
-    },
+     required: true,
+      validate: [
+      { validator: validators.isEmail, msg: 'Invalid email' } ]
+  },
   password: {
     type: String,
     minlength: 6,
     required: true,
   },
   phone: {
-    type: String,  
+    type: String,
     unique: true,
     required: true,
   },
@@ -38,7 +42,6 @@ class User {
 
   async register() {
     try {
-
       const hashedPass = await bcrypt.hash(this.password, 10);
       this.password = hashedPass;
       return await this.save();
@@ -48,7 +51,4 @@ class User {
   }
 }
 
-module.exports = {
-  User: UserModel,
-  UserClass: User,
-};
+export default mongoose.model('userSchema', userSchema)
