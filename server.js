@@ -15,6 +15,7 @@ app.use(cookieParser());
 
 app.use('/uploads', express.static(path.join(new URL(import.meta.url).pathname, 'uploads')));
 app.use('/user', profileEdit);
+app.use('/api', authRoute);
 
 const PORT = 3001;
 app.listen(PORT, () => {
