@@ -1,11 +1,11 @@
-const express=require('express');
-const router =express.Router()
-const authController =require('../Controllers/AuthController.js')
-const profileEdit =require('../Controllers/ProfileController.js')
+import express from 'express';
+const router = express.Router();
 
-router.post('/registerClient',authController.registerC)
-router.post('/registerFourniseur',authController.registerF)
-router.post('/login',authController.login)
+import * as authController from '../Controllers/AuthController.js';
+import * as profileEdit from '../Controllers/ProfileController.js';
 
+router.post('/registerClient', authController.registerC);
+router.post('/registerFourniseur', authController.registerF);
+router.post('/login', authController.login);
 
-module.exports=router
+export default router;

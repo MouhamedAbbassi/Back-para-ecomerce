@@ -1,10 +1,11 @@
-const express=require('express');
+import express from 'express';
 const router =express.Router()
-const authController =require('../Controllers/AuthController.js')
-const profileEdit =require('../Controllers/ProfileController.js')
-
-  router.post('/edit/:id',profileEdit.updateUser)
-  router.post('/editPasswor/:id',profileEdit.updatePassword)
 
 
-module.exports=router
+import * as authController from '../Controllers/AuthController.js';
+import * as profileEdit from '../Controllers/ProfileController.js';
+
+router.post('/edit/:id',profileEdit.updateUser)
+router.post('/editPassword/:id',profileEdit.updatePassword)
+
+  export default router;

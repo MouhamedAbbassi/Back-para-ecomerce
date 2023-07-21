@@ -1,14 +1,14 @@
-const { User, UserClass } = require('./User');
-const bcrypt = require('bcrypt');
+import bcrypt from 'bcrypt';
+import  User  from './User.js';
 
 class Client extends User {
   constructor(name, email, password, phone) {
     super(name, email, password, phone);  
   }
 
-/////////////////////////////////////////////////////////////
-///////////////////////////FUNCTION//////////////////////////
-/////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////
+  ///////////////////////////FUNCTION//////////////////////////
+  /////////////////////////////////////////////////////////////////
   async register() {
     try {
       const hashedPass = await bcrypt.hash(this.password, 10);
@@ -21,4 +21,4 @@ class Client extends User {
   }
 }
 
-module.exports = Client;
+export default Client;

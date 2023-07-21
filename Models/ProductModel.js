@@ -10,10 +10,9 @@ const reviewSchema = mongoose.Schema({
         required: true,
         ref: 'User'                             // Relation between the review and the user
     },
-}, {
-    timestamps: true                            // Automatically add createdAt and updatedAt fields
-});
-
+}, 
+{timestamps: true   });                          // Automatically add createdAt and updatedAt fields
+   
 //  schema represent the product 
 const productSchema = mongoose.Schema({
     user: {
