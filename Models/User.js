@@ -31,17 +31,21 @@ const userSchema = new Schema({
   role: {
     type: String,
   },
+   image: { 
+    type: String,
+  },
 }, { timestamps: true });
 
 const UserModel = mongoose.model('User', userSchema);
 
 class User {
-  constructor(name, email, password, phone) {
+  constructor(name, email, password, phone,image) {
     this.name = name;
     this.email = email;
     this.password = password;
     this.phone = phone;
     this.role = null;
+    this.image = image;
   }
 
   async register() {

@@ -3,34 +3,39 @@ import jwt from 'jsonwebtoken';
 import express from 'express';
 import User from '../Models/User.js';
 import mongoose from 'mongoose';
+import multer from 'multer';
+
+
+
 
 /////////////////////////////////////////////////////////////////
 //////////////////////// UPDATE /////////////////////////////////
 /////////////////////////////////////////////////////////////////
 
 export async function updateUser(req, res) {
-  const { id } = req.params; // the user ID as a URL parameter
-  const { name, email, phone } = req.body; //updated user data in the request body
+  console.log(storage);
+ 
+  const { id } = req.params; // ID as a URL parameter
+  const { name, email, phone } = req.body; // the request body
   try {
-    // Retrieve the user from the database
+
     const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    user.name = name || user.name; // Only update if the new value is provided, otherwise keep the existing value
+    user.name = name || user.name; // Only update if the new value is not null, otherwise keep the old value
     user.email = email || user.email;
     user.phone = phone || user.phone;
+    user.image = filename || user.image;
 
-    // Save the changes back to the database
-    const updatedUser = await user.save();
+     const updatedUser = await user.save();
+     filename='';
 
-    // Return the updated user as a response
-    res.json(updatedUser);
+     res.json(updatedUser);
   } catch (error) {
-    // Handle any errors that occur during the update process
-    res.status(500).json({ error: 'Failed to update user' });
+     res.status(500).json({ error: 'Failed to update user' });
   }
 }
 
@@ -79,5 +84,40 @@ export async function updatePassword(req, res) {
   } catch (error) {
     console.error('Error updating password:', error);
     return res.status(500).json({ message: error });
+  }
+}
+
+/////////////////////////////////////////////////////////////////
+////////////////////////UPDATE Image//////////////////////////
+/////////////////////////////////////////////////////////////////
+let filename ='';
+export const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+      cb(null, 'uploads');
+  },
+  filename:(req,file,redirect)=>{
+    let date=Date.now();
+    let fn =date+'.'+''+file.mimetype.split('/')[1];
+    redirect(null,fn);
+    filename =fn;
+   }
+});
+
+export async function updateImage(req, res) {
+ 
+  const { id } = req.params; // ID as a URL parameter
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    user.image = filename || user.image;
+     const updateImage = await user.save();
+     filename='';
+    res.json({message:'Image updated successfully'})
+     res.json(updateImage);
+  } catch (error) {
+     res.status(500).json({ error: 'Failed to update user' });
   }
 }
