@@ -75,8 +75,9 @@ export async function updatePassword(req, res) {
 
     const salt = await bcrypt.genSalt(10); // salt generation
     const hashedPassword = await bcrypt.hash(newPassword, salt); // Hash the new password
-
-     await User.updateOne({ password: hashedPassword });
+    console.log(hashedPassword);
+     await User.findOneAndUpdate({_id:id},{ password: hashedPassword });
+     console.log(User.password);
 
 
 
