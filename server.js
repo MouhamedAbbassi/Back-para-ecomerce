@@ -1,4 +1,5 @@
 import morgan from 'morgan';
+import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser'; // Add the correct import for cookie-parser
 import('./config/connexions.js'); // Make sure this import is valid and points to the correct file
@@ -12,7 +13,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api', authRoute);
+app.use('/uploads', express.static(path.join(new URL(import.meta.url).pathname, 'uploads')));
 app.use('/user', profileEdit);
 
 const PORT = 3001;
