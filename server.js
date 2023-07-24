@@ -2,9 +2,9 @@ import morgan from 'morgan';
 import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser'; // Add the correct import for cookie-parser
-import('./config/connexions.js'); // Make sure this import is valid and points to the correct file
+import('./src/config/connexions.js'); // Make sure this import is valid and points to the correct file
 
-import authRoute from './Routes/Auth.js';
+import authRoute from './src/Routes/Auth.js';
 
 const app = express();
 
