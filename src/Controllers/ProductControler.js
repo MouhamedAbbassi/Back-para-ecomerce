@@ -1,9 +1,8 @@
 import asyncHandler from 'express-async-handler';
 import Product from '../models/productModel.js';
+import {createnewproduct } from "../Services/ProductService.js";
 
-// @desc Fetch all products
-// @route GET /api/products
-// @access Public
+            // Fetch all products
 const getProducts = asyncHandler(async (req, res) => {
     // Extract query parameters from the request
     const Cg = req.query.Cg;            // Category filter
@@ -58,62 +57,45 @@ const getProducts = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc Fetch single product
-// @route GET /api/products/:id
-// @access Public
+            // Fetch a single product by its ID
 const getProductById = asyncHandler(async (req, res) => {
-    // Fetch a single product by its ID
     const product = await Product.findById(req.params.id);
     if (product) {
         res.json(product);
     } else {
-        // Return 404 if product is not found
         res.status(404);
         throw new Error('Product not found');
     }
 });
 
-// @desc Delete a product
-// @route GET /api/products/:id
-// @access Private/Admin
+            // Delete a product by ID
 const deleteProduct = asyncHandler(async (req, res) => {
-    // Delete a product by its ID
     const product = await Product.findById(req.params.id);
     if (product) {
         await product.remove();
         res.json({ message: 'Product Removed' });
     } else {
-        // Return 404 if product is not found
         res.status(404);
         throw new Error('Product not found');
     }
 });
 
-// @desc Create a product
-// @route POST /api/products
-// @access Private/Admin
+ ////////////////// Create a new product//////////////////////////
+
 const createProduct = asyncHandler(async (req, res) => {
-    // Create a new product with default values
-    const product = new Product({
-        name: 'Sample name',
-        price: 0,
-        description: 'sample description',
-        user: req.user._id,
-        brand: [],
-        images: [],
-        category: [],
-        countInStock: 0,
-        numReviews: 0,
-    });
-    const createdProduct = await product.save();
-    res.status(201).json(createdProduct);
+    // Get the product data from the request body
+    const { name, price, description, brand, images, category, countInStock, numReviews } = req.body;
+    try {
+        // Call the createnewproduct function from ProductService and await the result
+        const createdProduct = await createnewproduct(name, price, description, brand, images, category, countInStock, numReviews);
+        res.status(201).json(createdProduct);
+    } catch (err) {
+        res.json({ message: err });
+    }
 });
 
-// @desc Update a product
-// @route PUT /api/products/:id
-// @access Private/Admin
+       // Update an existing product by its ID
 const updateProduct = asyncHandler(async (req, res) => {
-    // Update an existing product by its ID
     const { name, price, description, category, brand, Images, countInStock } = req.body;
     console.log(name, price, Images);
     const product = await Product.findById(req.params.id);
@@ -135,11 +117,8 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc Create new Review
-// @route PUT /api/products/:id/reviews
-// @access Private
+            // Create a new review for a product
 const createProductReview = asyncHandler(async (req, res) => {
-    // Create a new review for a product
     const { rating, comment } = req.body;
     const product = await Product.findById(req.params.id);
     if (product) {
