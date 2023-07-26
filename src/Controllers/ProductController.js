@@ -2,7 +2,7 @@ import asyncHandler from 'express-async-handler';
 import Product from '../models/productModel.js';
 import {createnewproduct } from "../Services/ProductService.js";
 
-            // Fetch all products
+// Fetch all products
 const getProducts = asyncHandler(async (req, res) => {
     // Extract query parameters from the request
     const Cg = req.query.Cg;            // Category filter
