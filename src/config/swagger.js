@@ -9,7 +9,7 @@ const options = {
       version: "1.0.0",
       description: "API documentation for Back-end-ParaProject",
     },
-    servers:[{url:"http://127.0.0.1:3001" }],
+    servers:[{url:"http://localhost:3001/api/" }],
   },
   apis: ["./src/Routes/Auth.js"] // Point to the location of route files
  };
