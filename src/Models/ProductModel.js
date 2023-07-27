@@ -15,7 +15,16 @@ const reviewSchema = mongoose.Schema({
    
 //  schema represent the product 
 const productSchema = mongoose.Schema({
+    id:{
+        type: Number,
+        required: true,
+        default: 0 
+    },
     name: {
+        type: String,
+        required: true                          
+    },
+    title: {
         type: String,
         required: true                          
     },
@@ -29,10 +38,6 @@ const productSchema = mongoose.Schema({
     category: [{
         type: String,
         required: true                         
-    }],
-    brand: [{
-        type: String,
-        required: true                          
     }],
     reviews: [reviewSchema],                    // Array of reviews embedded in the product
     rating: {
@@ -50,11 +55,7 @@ const productSchema = mongoose.Schema({
         required: true,
         default: 0                              
     },
-    countInStock: {
-        type: Number,
-        required: true,
-        default: 0                              // Available quantity in stock with default value of 0
-    },
+   
 }, {
     timestamps: true                            
 });

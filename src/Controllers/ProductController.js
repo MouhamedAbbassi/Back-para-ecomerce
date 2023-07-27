@@ -1,7 +1,9 @@
 import asyncHandler from 'express-async-handler';
 import Product from '../models/productModel.js';
-import {createnewproduct } from "../Services/ProductService.js";
-
+import {createnewproduct,deleteProducts,updateProducts } from "../Services/ProductService.js";
+import multer from 'multer';
+import path from 'path';
+//const path = require('path');
 // Fetch all products
 const getProducts = asyncHandler(async (req, res) => {
     // Extract query parameters from the request
@@ -68,54 +70,66 @@ const getProductById = asyncHandler(async (req, res) => {
     }
 });
 
-            // Delete a product by ID
+// Delete a product by ID
 const deleteProduct = asyncHandler(async (req, res) => {
-    const product = await Product.findById(req.params.id);
-    if (product) {
-        await product.remove();
-        res.json({ message: 'Product Removed' });
-    } else {
-        res.status(404);
-        throw new Error('Product not found');
-    }
-});
-
- ////////////////// Create a new product//////////////////////////
-
-const createProduct = asyncHandler(async (req, res) => {
-    // Get the product data from the request body
-    const { name, price, description, brand, images, category, countInStock, numReviews } = req.body;
     try {
-        // Call the createnewproduct function from ProductService and await the result
-        const createdProduct = await createnewproduct(name, price, description, brand, images, category, countInStock, numReviews);
-        res.status(201).json(createdProduct);
+      const result = await deleteProducts(req.params.id);
+      res.json(result);
     } catch (err) {
-        res.json({ message: err });
+      // Handle any errors thrown by the ProductService
+      res.status(500).json({ error: err.message });
     }
+  });
+
+
+// Multer configuration for image upload
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'src/uploads/');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    },
 });
 
-       // Update an existing product by its ID
-const updateProduct = asyncHandler(async (req, res) => {
-    const { name, price, description, category, brand, Images, countInStock } = req.body;
-    console.log(name, price, Images);
-    const product = await Product.findById(req.params.id);
-    if (product) {
-        product.name = name;
-        product.price = price;
-        product.description = description;
-        product.category = category;
-        product.brand = brand;
-        product.images = Images;
-        product.countInStock = countInStock;
-        const updatedProduct = await product.save();
-        console.log(updatedProduct);
-        res.json(updatedProduct);
-    } else {
-        // Return 404 if product is not found
-        res.status(404);
-        throw new Error('Product Not found');
-    }
+const upload = multer({ storage: storage }).single('image');
+
+// Create a new product
+const createProduct = asyncHandler(async (req, res) => {
+    // Upload the product image first
+    upload(req, res, async function (err) {
+        if (err) {
+            return res.status(400).json({ message: 'Image upload failed!' });
+        }
+
+        // Get the product data from the request body, including the uploaded image file name
+        const { id,name, price, description,title,category, numReviews } = req.body;
+        const image = req.file ? req.file.filename : 'default.jpg';
+
+        try {
+            // Call the createnewproduct function from ProductService and await the result
+            const createdProduct = await createnewproduct(id,name,price,description,title,image,category,numReviews );
+            res.status(201).json({ message: 'Product created successfully', product: createdProduct });
+        } catch (err) {
+            res.status(500).json({ message: 'Failed to create product', error: err.message });
+        }
+    });
 });
+
+      // Update an existing product by its ID
+const updateProduct = asyncHandler(async (req, res) => {
+    const { id,name, price, description, category,title, Images, } = req.body;
+  
+    try {
+      const updatedProduct = await updateProducts(req.params.id, {id,name,price,description,category,title,images: Images,});
+  
+      res.json(updatedProduct);
+    } catch (err) {
+      // Handle any errors thrown by the ProductService
+      res.status(500).json({ error: err.message });
+    }
+  });
 
             // Create a new review for a product
 const createProductReview = asyncHandler(async (req, res) => {
@@ -157,4 +171,5 @@ export {
     createProduct,
     updateProduct,
     createProductReview,
+    upload,
 };
