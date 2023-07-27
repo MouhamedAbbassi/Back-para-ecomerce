@@ -1,4 +1,3 @@
-import Fournisseurs from "../Models/Fournisseurs.js";
 import Client from "../Models/Client.js";
 
  
@@ -22,24 +21,7 @@ export const registerC = (req, res) => {
     });
 };
 
-///////////////////REGISTER FOURNISSEUR//////////////////
-export const registerF = (req, res) => {
-  const { name, email, password, phone } = req.body;
-  const fournisseur = new Fournisseurs({
-    name: name,
-    email: email,
-    password: password,
-    phone: phone,
-  });
 
-  fournisseur.register()
-    .then(savedFournisseur => {
-      res.json({ message: "Fournisseur added successfully!", savedFournisseur });
-    })
-    .catch(error => {
-      res.json({ message: "An error occurred", error });
-    });
-};
 
 ///////////////////LOGIN//////////////////
 export const login = (req, res) => {

@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
    import * as authController from "../Controllers/AuthController.js";
+ import * as ParaController from "../Controllers/ParaController.js";
  import * as forgotpassword from "../Controllers/ForgotPassword.js";
 
 
@@ -174,7 +175,7 @@ router.route("/auth/client")
  *                       type: object
  */
 router.route("/auth/fournisseur")
-    .post(authController.registerF);
+    .post(ParaController.registerF);
 
 
 /**
