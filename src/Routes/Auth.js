@@ -226,10 +226,62 @@ router.route("/auth/login")
     .post(authController.login);
 
 
-router.route("/auth/forgotpassword")
-    .post(forgotpassword.forget_password)
-    .get(forgotpassword.reset_password);
 
+/**
+ * @swagger
+ * /auth/forgotpassword:
+ *   post:
+ *     summary: forget password with email
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *             example:
+ *               email: Email
+ *     responses:
+ *       200:
+ *         description: please check your inbox of mail.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: please check your inbox of mail.
+ *       400:
+ *         description: An error occurred
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred
+ *                 error:
+ *                   type: object
+ *                   properties:
+ *                     index:
+ *                       type: number
+ *                     code:
+ *                       type: number
+ *                     keyPattern:
+ *                       type: object
+ *                     keyValue:
+ *                       type: object
+ */
+
+router.route("/auth/forgotpassword")
+    .post(forgotpassword.forget_password);
+    
+router.route("/auth/resetpassword")
+    .get(forgotpassword.reset_password);
 
 
 
