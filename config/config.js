@@ -1,5 +1,5 @@
 export const config = {
     emailUser:'ettaiebshayma5@gmail.com',
-    emailPassword:'ckhnmfxszgcstuyq'
+    emailPassword:'soudxlssayduphyw'
 }
 export default config;
