@@ -6,7 +6,7 @@ import nodemailer from 'nodemailer';
 
 
 ///////////////////SEND EMAIL //////////////////
-const  sendVerificationCode = async(name, email,code,res)=>{
+const  sendVerificationCode = async(name, email,code)=>{
 
   try {
       const transporter = nodemailer.createTransport({

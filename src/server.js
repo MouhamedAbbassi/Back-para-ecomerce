@@ -9,6 +9,7 @@ import authRoute from "./Routes/Auth.js";
 import ProfileRoutes from "./Routes/ProfileRoutes.js";
 import ParaRoutes from "./Routes/ParaRoutes.js";
 import cors from "cors";
+import { registerC } from "./Controllers/AuthController.js";
 
 const app = express();
 
@@ -18,10 +19,11 @@ app.use(cookieParser());
 
 // Enable CORS for specific origins
 const corsOptions = {
-  origin: ['http://127.0.0.1:3001'],
+  origin: ['http://127.0.0.1:3001','http://localhost:5173'],
 };
 
 app.use(cors(corsOptions));
+app.use(registerC);
 
 app.use("/uploads", express.static(path.join(new URL(import.meta.url).pathname, "uploads")));
 // Serve Swagger UI
