@@ -1,9 +1,10 @@
 import asyncHandler from 'express-async-handler';
 import Product from '../models/productModel.js';
-
-// @desc Fetch all products
-// @route GET /api/products
-// @access Public
+import {createnewproduct,deleteProducts,updateProducts } from "../Services/ProductService.js";
+import multer from 'multer';
+import path from 'path';
+//const path = require('path');
+// Fetch all products
 const getProducts = asyncHandler(async (req, res) => {
     // Extract query parameters from the request
     const Cg = req.query.Cg;            // Category filter
@@ -58,88 +59,80 @@ const getProducts = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc Fetch single product
-// @route GET /api/products/:id
-// @access Public
+            // Fetch a single product by its ID
 const getProductById = asyncHandler(async (req, res) => {
-    // Fetch a single product by its ID
     const product = await Product.findById(req.params.id);
     if (product) {
         res.json(product);
     } else {
-        // Return 404 if product is not found
         res.status(404);
         throw new Error('Product not found');
     }
 });
 
-// @desc Delete a product
-// @route GET /api/products/:id
-// @access Private/Admin
+// Delete a product by ID
 const deleteProduct = asyncHandler(async (req, res) => {
-    // Delete a product by its ID
-    const product = await Product.findById(req.params.id);
-    if (product) {
-        await product.remove();
-        res.json({ message: 'Product Removed' });
-    } else {
-        // Return 404 if product is not found
-        res.status(404);
-        throw new Error('Product not found');
+    try {
+      const result = await deleteProducts(req.params.id);
+      res.json(result);
+    } catch (err) {
+      // Handle any errors thrown by the ProductService
+      res.status(500).json({ error: err.message });
     }
+  });
+
+
+// Multer configuration for image upload
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'src/uploads/');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    },
 });
 
-// @desc Create a product
-// @route POST /api/products
-// @access Private/Admin
+const upload = multer({ storage: storage }).single('image');
+
+// Create a new product
 const createProduct = asyncHandler(async (req, res) => {
-    // Create a new product with default values
-    const product = new Product({
-        name: 'Sample name',
-        price: 0,
-        description: 'sample description',
-        user: req.user._id,
-        brand: [],
-        images: [],
-        category: [],
-        countInStock: 0,
-        numReviews: 0,
+    // Upload the product image first
+    upload(req, res, async function (err) {
+        if (err) {
+            return res.status(400).json({ message: 'Image upload failed!' });
+        }
+
+        // Get the product data from the request body, including the uploaded image file name
+        const { id,name, price, description,title,category, numReviews } = req.body;
+        const image = req.file ? req.file.filename : 'default.jpg';
+
+        try {
+            // Call the createnewproduct function from ProductService and await the result
+            const createdProduct = await createnewproduct(id,name,price,description,title,image,category,numReviews );
+            res.status(201).json({ message: 'Product created successfully', product: createdProduct });
+        } catch (err) {
+            res.status(500).json({ message: 'Failed to create product', error: err.message });
+        }
     });
-    const createdProduct = await product.save();
-    res.status(201).json(createdProduct);
 });
 
-// @desc Update a product
-// @route PUT /api/products/:id
-// @access Private/Admin
+      // Update an existing product by its ID
 const updateProduct = asyncHandler(async (req, res) => {
-    // Update an existing product by its ID
-    const { name, price, description, category, brand, Images, countInStock } = req.body;
-    console.log(name, price, Images);
-    const product = await Product.findById(req.params.id);
-    if (product) {
-        product.name = name;
-        product.price = price;
-        product.description = description;
-        product.category = category;
-        product.brand = brand;
-        product.images = Images;
-        product.countInStock = countInStock;
-        const updatedProduct = await product.save();
-        console.log(updatedProduct);
-        res.json(updatedProduct);
-    } else {
-        // Return 404 if product is not found
-        res.status(404);
-        throw new Error('Product Not found');
+    const { id,name, price, description, category,title, Images, } = req.body;
+  
+    try {
+      const updatedProduct = await updateProducts(req.params.id, {id,name,price,description,category,title,images: Images,});
+  
+      res.json(updatedProduct);
+    } catch (err) {
+      // Handle any errors thrown by the ProductService
+      res.status(500).json({ error: err.message });
     }
-});
+  });
 
-// @desc Create new Review
-// @route PUT /api/products/:id/reviews
-// @access Private
+            // Create a new review for a product
 const createProductReview = asyncHandler(async (req, res) => {
-    // Create a new review for a product
     const { rating, comment } = req.body;
     const product = await Product.findById(req.params.id);
     if (product) {
@@ -178,4 +171,5 @@ export {
     createProduct,
     updateProduct,
     createProductReview,
+    upload,
 };
