@@ -15,16 +15,7 @@ const reviewSchema = mongoose.Schema({
    
 //  schema represent the product 
 const productSchema = mongoose.Schema({
-    id:{
-        type: Number,
-        required: true,
-        default: 0 
-    },
     name: {
-        type: String,
-        required: true                          
-    },
-    title: {
         type: String,
         required: true                          
     },
