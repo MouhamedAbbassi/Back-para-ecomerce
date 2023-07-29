@@ -9,7 +9,6 @@ import authRoute from "./Routes/Auth.js";
 import ProfileRoutes from "./Routes/ProfileRoutes.js";
 import ParaRoutes from "./Routes/ParaRoutes.js";
 import cors from "cors";
-import { registerC } from "./Controllers/AuthController.js";
 
 const app = express();
 
@@ -23,7 +22,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(registerC);
 
 app.use("/uploads", express.static(path.join(new URL(import.meta.url).pathname, "uploads")));
 // Serve Swagger UI

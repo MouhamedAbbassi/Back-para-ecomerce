@@ -7,9 +7,40 @@ function generateVerificationCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+///////////////////  CONFIRMATION //////////////////
+export async function VerificationCode(req,res) {
+  
+ 
+ 
+    const email="mouhamed.abbassi@esprit.tn";
+
+    // Find the client by their email and verificationCode
+    const client = await Client.findOne({ email });
+    console.log(client);
+ 
+         console.log(req.body.code);
+ 
+         if(req.body.code===client.token){
+          client.isEmailVerified = true;
+     
+          
+          await client.register()
+          .then(savedClient => {
+            res.json({ message: "Client added successfully!", savedClient });})
+          .catch(error => {
+            res.json({ message: "An error occurred", error });});
+          }else{
+            await Client.deleteOne({ email });
+
+            res.json({ message: "code incorrect try later " });
+
+
+          }
+  
+ }
 ///////////////////REGISTER CLIENT//////////////////
 
-export const registerC = async (req, res,next) => {
+export const registerC = async (req, res) => {
   const {  name,email, phone } = req.body;
   const existingEmail = await Client.findOne({ email });
   const existingPhone = await Client.findOne({ phone });
@@ -24,38 +55,25 @@ export const registerC = async (req, res,next) => {
   const code = generateVerificationCode();
   console.log(code);
   await sendVerificationCode(name,email,code);
-  /*const client = new Client({
+  const client = new Client({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
     phone: req.body.phone,
+    token:code,
       
-  });*/
+  });
   
+  await client.register()
+  .then(savedClient => {
+    res.json({ message: "Client added successfully!", savedClient });})
+  .catch(error => {
+    res.json({ message: "An error occurred", error });});
 
- // VerificationCode(req,res) ;
-next();
+ 
+
 };
 
-///////////////////  CONFIRMATION //////////////////
-export async function VerificationCode(req,res) {
-  const code =req.body.code;
-  const client = new Client({
-    name: "az",
-    email: "m@m.com",
-    password: "req.registerC.password",
-    phone: "62",
-  });
-
-  if(code==="0000"){
-    await client.register()
-    .then(savedClient => {
-      res.json({ message: "Client added successfully!", savedClient });})
-    .catch(error => {
-      res.json({ message: "An error occurred", error });});
-
-  }
- }
 ///////////////////LOGIN//////////////////
 export const login = (req, res) => {
   const username = req.body.username;
