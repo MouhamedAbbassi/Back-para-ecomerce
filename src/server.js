@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 // Enable CORS for specific origins
 const corsOptions = {
-  origin: ['http://127.0.0.1:3001'],
+  origin: ['http://127.0.0.1:3001','http://localhost:5173'],
 };
 
 app.use(cors(corsOptions));

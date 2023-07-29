@@ -7,6 +7,7 @@ class Client extends User {
 
      super(name, email, password, phone); 
      this.role = "client";
+     this.isEmailVerified=false;
     }
 
 /////////////////FUNCTION/////////////////

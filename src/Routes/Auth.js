@@ -225,6 +225,9 @@ router.route("/auth/fournisseur")
 router.route("/auth/login")
     .post(authController.login);
 
+    router.route("/auth/verif")
+    .post(authController.VerificationCode);
+
 
 
 /**

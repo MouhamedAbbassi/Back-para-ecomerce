@@ -1,4 +1,4 @@
-import  userSchema  from '../Models/Uthis email does not exist.ser.js';
+import  userSchema  from '../Models/User.js';
 import  config  from '../config/config.js';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
