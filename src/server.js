@@ -23,7 +23,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use("/uploads", express.static(path.join(new URL(import.meta.url).pathname, "uploads")));
+app.use("/src/server.js", express.static(path.join(new URL(import.meta.url).pathname, "uploads")));
 // Serve Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
  

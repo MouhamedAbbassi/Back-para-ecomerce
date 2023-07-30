@@ -53,7 +53,6 @@ export const registerC = async (req, res) => {
     return res.status(400).json({ message: 'Phone already exists.' });
   }
   const code = generateVerificationCode();
-  console.log(code);
   await sendVerificationCode(name,email,code);
   const client = new Client({
     name: req.body.name,

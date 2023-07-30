@@ -7,6 +7,9 @@ class Client extends User {
 
      super(name, email, password, phone); 
      this.role = "client";
+     this.age = 0;
+     this.address = null;
+     this.gender = null;
      this.isEmailVerified=false;
     }
 

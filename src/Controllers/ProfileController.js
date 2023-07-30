@@ -3,18 +3,17 @@ import multer from "multer";
  
 
  //////////////////////// UPDATE PROFILE/////////////////////////////////
-export async function updateUser(req, res) { 
+export async function updateUser(req, res) {
   const { id } = req.params; // ID as a URL parameter
-  const { name, email, phone } = req.body; // the request body
+  const { name, phone, age, address, gender } = req.body; // the request body
 
-  updateUserProfile(id,name,email, phone)
-  .then((result) => {
-   return res.json(result);
-  })
-  .catch((err) => {
-    res.json({ message: err });
-  });
-   
+  try {
+    const result = await updateUserProfile(id, name, phone, age, address, gender);
+    return res.json(result);
+  } catch (error) {
+    console.error("Error while updating user profile:", error);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
 }
 ////////////////////////UPDATE PASSWORD//////////////////////////
 export async function updatePassword(req, res) {
@@ -32,7 +31,7 @@ export async function updatePassword(req, res) {
 let filename ="";
 export const storage = multer.diskStorage({
   destination: function(req, file, cb) {
-      cb(null, "uploads");
+      cb(null, "src/uploads");
   },
   filename:(req,file,redirect)=>{
     let date=Date.now();
@@ -48,7 +47,7 @@ export async function updateImage(req, res) {
   try {
     const result = await updateUserImage(id,filename);
     return res.json(result);
-  } catch (err) {
+  } catch (err) { 
      return res.status(500).json({ message:err });
   }
 }

@@ -11,6 +11,7 @@ const router = express.Router();
  * /auth/client:
  *   post:
  *     summary: Register a new client
+ *     tags: [Athentification]
  *     requestBody:
  *       required: true
  *       content:
@@ -97,6 +98,7 @@ router.route("/auth/client")
  * /auth/fournisseur:
  *   post:
  *     summary: Register a new Fournisseur
+ *     tags: [Athentification]
  *     requestBody:
  *       required: true
  *       content:
@@ -183,6 +185,7 @@ router.route("/auth/fournisseur")
  * /auth/login:
  *   post:
  *     summary: Log in with username and password
+ *     tags: [Athentification]
  *     requestBody:
  *       required: true
  *       content:
@@ -235,6 +238,7 @@ router.route("/auth/login")
  * /auth/forgotpassword:
  *   post:
  *     summary: forget password with email
+ *     tags: [Athentification]
  *     requestBody:
  *       required: true
  *       content:
