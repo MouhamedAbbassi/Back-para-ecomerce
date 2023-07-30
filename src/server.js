@@ -19,12 +19,12 @@ app.use(cookieParser());
 
 // Enable CORS for specific origins
 const corsOptions = {
-  origin: ['http://127.0.0.1:3001'],
+  origin: ['http://127.0.0.1:3001','http://localhost:5173'],
 };
 
 app.use(cors(corsOptions));
 
-app.use("/uploads", express.static(path.join(new URL(import.meta.url).pathname, "uploads")));
+app.use("/src/server.js", express.static(path.join(new URL(import.meta.url).pathname, "uploads")));
 // Serve Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
  

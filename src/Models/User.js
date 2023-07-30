@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import validators from "validator";
-
+ 
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -24,6 +24,15 @@ const userSchema = new Schema({
     unique: true,
     required: true,
   },
+  age: {
+    type: Number,
+   },
+   address : {
+    type: String,
+    },
+  gender: {
+    type: String,
+  },
   token:{
     type:String,
     default:""
@@ -34,13 +43,16 @@ const userSchema = new Schema({
    image: { 
     type: String,
   },
+  isEmailVerified:{
+   type: Boolean,
+    }
 }, { timestamps: true });
 
  
 /////////////////FUNCTION/////////////////
-
 userSchema.methods.register = async function () {
-  const hashedPass =await  bcrypt.hash(this.password, 10);
+
+  const hashedPass = await bcrypt.hash(this.password, 10);
   this.password = hashedPass;
   return await this.save();
 

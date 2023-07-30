@@ -4,23 +4,24 @@ import mongoose from "mongoose";
 
 
 ////////////////////////Update User Profile///////////////////////
-async function updateUserProfile(id,name, email,phone,req,res) {
-    try {
-        const user = await User.findById(id);
-        if (!user) {
-          return res.status(404).json({ error: "User not found" });
-        }
-        user.name = name || user.name; // Only update if the new value is not null, otherwise keep the old value
-        user.email = email || user.email;
-        user.phone = phone || user.phone;
-     
-         const updatedUser = await user.save();
-        return updatedUser;
+async function updateUserProfile(id, name, phone, age, address, gender) {
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      throw { status: 404, message: `User not found :${id}` };
+    }  
+      user.name = name || user.name; // Only update if the new value is not null, otherwise keep the old value
+      user.phone = phone || user.phone;
+      user.age = age || user.age;
+      user.address = address || user.address;  
+      user.gender = gender || user.gender;
+      await user.save();
 
-      } catch (error) {
-         res.status(500).json({ error: "Failed to update user" });
-      }
+      return { message: " updated successfully" }; 
+  } catch (error) {
+    throw { status: 500, message: error };
   }
+}
   ////////////////////////CHECK OLD PASSWORD///////////////////////
     async function checkOldPassword(enteredPassword, hashedPassword) {
     const isMatch = await bcrypt.compare(enteredPassword, hashedPassword);
@@ -58,10 +59,9 @@ async function updateUserProfile(id,name, email,phone,req,res) {
             throw { status: 404, message: `User not found :${id}` };
         }
         user.image = filename || user.image;
-        console.log(filename);
-        const updateImage = await user.save();
-         filename="";
-         return { message: "Image updated successfully",updateImage };
+           filename="";
+           await user.save();
+         return { message: "Image updated successfully" };
        } catch (error) {
         throw { status: 500, message: error };
      }
