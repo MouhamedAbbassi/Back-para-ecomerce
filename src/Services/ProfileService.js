@@ -4,23 +4,22 @@ import mongoose from "mongoose";
 
 
 ////////////////////////Update User Profile///////////////////////
-async function updateUserProfile(id, name, phone, age, address, gender, req, res) {
+async function updateUserProfile(id, name, phone, age, address, gender) {
   try {
     const user = await User.findById(id);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    } else {
+      throw { status: 404, message: `User not found :${id}` };
+    }  
       user.name = name || user.name; // Only update if the new value is not null, otherwise keep the old value
       user.phone = phone || user.phone;
       user.age = age || user.age;
       user.address = address || user.address;  
       user.gender = gender || user.gender;
-
       await user.save();
-      return { message: " updated successfully" };
-    }
-  } catch (err) {
-   return res.status(500).json({ err: "Failed to update user" });
+
+      return { message: " updated successfully" }; 
+  } catch (error) {
+    throw { status: 500, message: error };
   }
 }
   ////////////////////////CHECK OLD PASSWORD///////////////////////
@@ -60,9 +59,8 @@ async function updateUserProfile(id, name, phone, age, address, gender, req, res
             throw { status: 404, message: `User not found :${id}` };
         }
         user.image = filename || user.image;
-        console.log(filename);
-          await user.save();
-         filename="";
+           filename="";
+           await user.save();
          return { message: "Image updated successfully" };
        } catch (error) {
         throw { status: 500, message: error };

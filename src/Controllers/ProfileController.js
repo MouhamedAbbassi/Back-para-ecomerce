@@ -3,16 +3,15 @@ import multer from "multer";
  
 
  //////////////////////// UPDATE PROFILE/////////////////////////////////
-export async function updateUser(req, res) {
-  const { id } = req.params; // ID as a URL parameter
-  const { name, phone, age, address, gender } = req.body; // the request body
+ export async function updateUser(req, res) {
+  const { id } = req.params;
+  const { name, phone, age, address, gender } = req.body;
 
   try {
     const result = await updateUserProfile(id, name, phone, age, address, gender);
     return res.json(result);
-  } catch (error) {
-    console.error("Error while updating user profile:", error);
-    return res.status(500).json({ message: "Something went wrong" });
+  } catch (err) {
+    return res.status(err.status || 500).json({ message: err.message || "An error occurred" });
   }
 }
 ////////////////////////UPDATE PASSWORD//////////////////////////
@@ -27,7 +26,7 @@ export async function updatePassword(req, res) {
      return res.status(500).json({ message:err });
   }
 }
-/////////////////UPLOADING FILE/////////////////
+///////////UPLOADING FILE USING MULTER////////////
 let filename ="";
 export const storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -42,8 +41,8 @@ export const storage = multer.diskStorage({
 });
  ///////////////////UPDATE IMAGE///////////////////
 export async function updateImage(req, res) {
- 
-  const { id } = req.params; // ID as a URL parameter
+  const { id } = req.params; 
+
   try {
     const result = await updateUserImage(id,filename);
     return res.json(result);
