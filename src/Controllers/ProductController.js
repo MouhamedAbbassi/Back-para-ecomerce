@@ -1,9 +1,9 @@
-import asyncHandler from 'express-async-handler';
-import Product from '../models/productModel.js';
+import asyncHandler from "express-async-handler";
+import Product from "../models/productModel.js";
 import {createnewproduct,deleteProducts,updateProducts } from "../Services/ProductService.js";
-import multer from 'multer';
-import path from 'path';
-//const path = require('path');
+import multer from "multer";
+import path from "path";
+
 // Fetch all products
 const getProducts = asyncHandler(async (req, res) => {
     // Extract query parameters from the request
@@ -15,7 +15,7 @@ const getProducts = asyncHandler(async (req, res) => {
         ? {
               name: {
                   $regex: req.query.keyword,
-                  $options: 'i',
+                  $options: "i",
               },
           }
         : {};                          // Keyword search for product name
@@ -29,22 +29,26 @@ const getProducts = asyncHandler(async (req, res) => {
     } else if (filter) {
         // Sort and fetch products based on different filter options
         switch (filter) {
-            case 'Rating':
-                const productsByRating = await Product.find({}).sort('-rating').exec();
+            case "Rating":{
+                const productsByRating = await Product.find({}).sort("-rating").exec();
                 res.json(productsByRating);
                 break;
-            case 'date':
-                const productsByDate = await Product.find({}).sort('createdAt').exec();
+            }
+            case "date":{
+                const productsByDate = await Product.find({}).sort("createdAt").exec();
                 res.json(productsByDate);
                 break;
-            case 'highprice':
-                const productsByHighPrice = await Product.find({}).sort('price');
+            }
+            case "highprice":{
+                const productsByHighPrice = await Product.find({}).sort("price");
                 res.json(productsByHighPrice);
                 break;
-            case 'lowprice':
-                const productsByLowPrice = await Product.find({}).sort('-price').exec();
+            }
+            case "lowprice":{
+                const productsByLowPrice = await Product.find({}).sort("-price").exec();
                 res.json(productsByLowPrice);
                 break;
+            }
             default:
                 break;
         }
@@ -66,7 +70,7 @@ const getProductById = asyncHandler(async (req, res) => {
         res.json(product);
     } else {
         res.status(404);
-        throw new Error('Product not found');
+        throw new Error("Product not found");
     }
 });
 
@@ -85,44 +89,44 @@ const deleteProduct = asyncHandler(async (req, res) => {
 // Multer configuration for image upload
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'src/uploads/');
+        cb(null, "src/uploads/");
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
         cb(null, uniqueSuffix + path.extname(file.originalname));
     },
 });
 
-const upload = multer({ storage: storage }).single('image');
+const upload = multer({ storage: storage }).single("image");
 
 // Create a new product
 const createProduct = asyncHandler(async (req, res) => {
     // Upload the product image first
     upload(req, res, async function (err) {
         if (err) {
-            return res.status(400).json({ message: 'Image upload failed!' });
+            return res.status(400).json({ message: "Image upload failed!" });
         }
 
         // Get the product data from the request body, including the uploaded image file name
-        const { id,name, price, description,title,category, numReviews } = req.body;
-        const image = req.file ? req.file.filename : 'default.jpg';
+        const {name, price, description,category, numReviews } = req.body;
+        const image = req.file ? req.file.filename : "default.jpg";
 
         try {
             // Call the createnewproduct function from ProductService and await the result
-            const createdProduct = await createnewproduct(id,name,price,description,title,image,category,numReviews );
-            res.status(201).json({ message: 'Product created successfully', product: createdProduct });
+            const createdProduct = await createnewproduct(name,price,description,image,category,numReviews );
+            res.status(201).json({ message: "Product created successfully", product: createdProduct });
         } catch (err) {
-            res.status(500).json({ message: 'Failed to create product', error: err.message });
+            res.status(500).json({ message: "Failed to create product", error: err.message });
         }
     });
 });
 
       // Update an existing product by its ID
 const updateProduct = asyncHandler(async (req, res) => {
-    const { id,name, price, description, category,title, Images, } = req.body;
-  
+    const { name, price, description, category, Images, } = req.body;
+    const { id } = req.params; // ID as a URL parameter
     try {
-      const updatedProduct = await updateProducts(req.params.id, {id,name,price,description,category,title,images: Images,});
+      const updatedProduct = await updateProducts(id, {name,price,description,category,images: Images,});
   
       res.json(updatedProduct);
     } catch (err) {
@@ -142,7 +146,7 @@ const createProductReview = asyncHandler(async (req, res) => {
         if (alreadyReviewed) {
             // Return 404 if product is already reviewed by the user
             res.status(404);
-            throw new Error('Product Already Reviewed');
+            throw new Error("Product Already Reviewed");
         }
         const review = {
             name: req.user.name,
@@ -156,14 +160,14 @@ const createProductReview = asyncHandler(async (req, res) => {
         product.rating =
         product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
         await product.save();
-        res.status(201).json({ message: 'Review added' });
+        res.status(201).json({ message: "Review added" });
     } else {
         res.status(404);
-        throw new Error('Product Not found');
+        throw new Error("Product Not found");
     }
 });
 
-// Exporting the route handlers to be used in the application's routes
+
 export {
     getProducts,
     getProductById,
