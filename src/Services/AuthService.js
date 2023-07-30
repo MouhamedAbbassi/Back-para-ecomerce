@@ -1,16 +1,15 @@
 import  userSchema  from "../Models/User.js";
  import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import nodemailer from 'nodemailer';
- import  config  from '../config/config.js';
+import nodemailer from "nodemailer";
+ import  config  from "../config/config.js";
 
 
-///////////////////SEND EMAIL //////////////////
-const  sendVerificationCode = async(name, email,code)=>{
-
+/////////////////// SEND EMAIL //////////////////
+const  sendVerificationCode = async(name, email,code,res)=>{
   try {
       const transporter = nodemailer.createTransport({
-          host:'smtp.gmail.com',
+          host:"smtp.gmail.com",
           port:587,
           secure:false,
           requireTLS:true,
@@ -19,23 +18,19 @@ const  sendVerificationCode = async(name, email,code)=>{
               pass:config.emailPassword
           }
       });
-
       const mailOptions={
           from:config.emailUser,
           to:email,
-          subject: 'Email Verification Code',
-          text: `Your verification code is: ${code}`,
+          subject: "Email Verification Code",
+          text: `Hello ${name} Your verification code is: ${code}`,
       };
       transporter.sendMail(mailOptions,function(error){
           if (error) {
               console.log(error);
-          } else {
-              
+          } else {       
             return { message:"mail has been sent:- "};
-          }
-          
+          }   
       });
-
   } catch (error) {
       res.status(400).send({success:false,msg:error.messege});
   }

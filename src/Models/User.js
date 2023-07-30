@@ -24,6 +24,15 @@ const userSchema = new Schema({
     unique: true,
     required: true,
   },
+  age: {
+    type: Number,
+   },
+   address : {
+    type: String,
+    },
+  gender: {
+    type: String,
+  },
   token:{
     type:String,
     default:""
