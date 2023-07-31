@@ -127,5 +127,6 @@ router.route("/profile/editPassword/:id")
     .post(ProfileController.updatePassword);
 
 
+router.get("/profile/getUserInfo/:id", ProfileController.getUserInfo);
 
 export default router;

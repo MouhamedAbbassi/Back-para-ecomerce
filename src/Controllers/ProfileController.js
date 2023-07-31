@@ -1,3 +1,4 @@
+import Client from "../Models/Client.js";
 import { updateUserProfile ,updateUserPassword, updateUserImage} from "../Services/ProfileService.js";
 import multer from "multer";
  
@@ -48,5 +49,25 @@ export async function updateImage(req, res) {
     return res.json(result);
   } catch (err) { 
      return res.status(500).json({ message:err });
+  }
+}
+
+///////////////////getUserInfo//////////////////
+
+export async function getUserInfo(req, res) {
+  const id = req.params.id;
+  console.log(id);
+  try {
+    const client = await Client.findById(id);
+    console.log(client)
+    if (client) {
+      res.json(client);
+     
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'An error occurred', error });
   }
 }
