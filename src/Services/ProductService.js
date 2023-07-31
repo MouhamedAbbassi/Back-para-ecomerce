@@ -3,7 +3,7 @@ import Product from "../models/productModel.js";
  
  // Create a new product
 
-async function  createnewproduct(name,price, description,images,category,numReviews) {
+async function  createnewproduct(name,rating,about,freeShipping,discount,isOffer,fastDelivery,isInStock,price, description,images,category,numReviews) {
     
         const product = new Product({
             name: name,
@@ -12,6 +12,13 @@ async function  createnewproduct(name,price, description,images,category,numRevi
             images: images,
             category: category,
             numReviews:numReviews ,
+            rating:rating,
+            about:about,
+            freeShipping:freeShipping,
+            discount:discount,
+            isOffer:isOffer,
+            fastDelivery:fastDelivery,
+            isInStock:isInStock,
           });
      
           const createdProduct = await product.save();
