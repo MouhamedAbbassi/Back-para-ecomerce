@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { addorderitems, GetMyOrders, getOrderById, GetOrders, updateOrderToPaid,updateOrderToDelivered } from "../controlers/orderControler.js";
+import { addorderitems, GetMyOrders, getOrderById, GetOrders, updateOrderToPaid,updateOrderToDelivered } from "../Controllers/OrderController.js";
 
 
  router.route("/orders/create").post(addorderitems);

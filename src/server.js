@@ -9,7 +9,8 @@ import authRoute from "./Routes/Auth.js";
 import ProfileRoutes from "./Routes/ProfileRoutes.js";
 import ParaRoutes from "./Routes/ParaRoutes.js";
 import cors from "cors";
-import productRoutes from "./Routes/ProductRoutes.js";
+import productRoutes from './Routes/ProductRoutes.js';
+import OrderRoutes from './Routes/OrderRoutes.js';
 
 const app = express();
 
@@ -19,7 +20,7 @@ app.use(cookieParser());
 
 // Enable CORS for specific origins
 const corsOptions = {
-  origin: ["http://127.0.0.1:3001","http://localhost:5173"],
+  origin: ['http://127.0.0.1:3001','http://localhost:5173'],
 };
 
 app.use(cors(corsOptions));
@@ -32,7 +33,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 app.use("/api/", authRoute);
 app.use("/api/", ProfileRoutes);
 app.use("/api/", ParaRoutes);
-app.use("/api/", productRoutes);
+app.use('/api/', productRoutes);
+app.use('/api/', OrderRoutes);
 
 const PORT = 3001;
 app.listen(PORT, () => { console.log(`Server running on port ${PORT}`);
