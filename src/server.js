@@ -10,7 +10,12 @@ import ProfileRoutes from "./Routes/ProfileRoutes.js";
 import ParaRoutes from "./Routes/ParaRoutes.js";
 import cors from "cors";
 import productRoutes from './Routes/ProductRoutes.js';
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
+// Get the current directory name
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const app = express();
 
 app.use(morgan("dev"));
@@ -24,7 +29,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use("/src/server.js", express.static(path.join(new URL(import.meta.url).pathname, "uploads")));
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // Serve Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
  
