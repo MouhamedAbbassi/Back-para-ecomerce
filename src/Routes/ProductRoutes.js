@@ -3,8 +3,9 @@ import express from 'express';
 // import * as productController from "../Controllers/ProductControler"
  
 import { createProduct, createProductReview, deleteProduct, getProductById, getProducts, updateProduct } from '../Controllers/ProductController.js';
- 
 import { upload } from '../Controllers/ProductController.js'; 
+import { protect } from '../Middlewares/verifyToken.js';
+ 
 const router = express.Router();
  
 
@@ -112,29 +113,34 @@ router.route('/products').get(getProducts);
 router.route('/products').post(createProduct);
 // Middleware to protect routes and ensure authentication
 // Route-specific authentication middleware
-const protect = async (req, res, next) => {
-    try {
-      const token = req.headers.authorization;
-  
-      // Verify the token and extract user ID (assuming your token contains user ID)
-      const { userId } = verifyToken(token);
-  
-      // Fetch user data from the database using the user ID
-      const user = await user.findById(userId);
-  
-      if (!user) {
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
-  
-      // Set the authenticated user data in req.user
-      req.user = user;
-  
-      // Continue to the next middleware or route handler
-      next();
-    } catch (err) {
-      res.status(401).json({ message: 'Unauthorized' });
-    }
-  };
+// const protect = async (req, res, next) => {
+//   try {
+//     const token = req.headers.authorization;
+
+//     console.log('Received token:', token); // Add this debug log to check the token value
+
+//     // Verify the token and extract user ID (assuming your token contains user ID)
+//     const { userId } = verifyToken(token);
+
+//     console.log('Extracted userId:', userId); // Add this debug log to check the extracted userId
+
+//     // Fetch user data from the database using the user ID
+//     const user = await user.findById(userId);
+
+//     if (!user) {
+//       return res.status(401).json({ message: 'Unauthorized' });
+//     }
+
+//     req.user = user;
+
+     
+//     next();
+//   } catch (err) {
+//     console.error('Error in protect middleware:', err); // Add this debug log to check for any errors
+//     res.status(401).json({ message: 'Unauthorized' });
+//   }
+// };
+
   
 /**
  * @swagger
@@ -219,7 +225,7 @@ const protect = async (req, res, next) => {
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/api/products/:id/reviews').post(protect,createProductReview);
+router.route('/products/:id/reviews').post(protect , createProductReview);
 
 /**
  * @swagger

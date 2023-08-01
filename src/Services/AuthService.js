@@ -35,16 +35,16 @@ const  sendVerificationCode = async(name, email,code,res)=>{
       res.status(400).send({success:false,msg:error.messege});
   }
 };
- //////////////////////// LOGIN //////////////////////////
+
+//////////////////////// LOGIN //////////////////////////
 async function loginUser(username, password) {
   try {
     const user = await userSchema.findOne({ $or: [{ email: username }, { phone: username }] });
 
     if (user) {
       const passwordMatch = await bcrypt.compare(password, user.password);
-
       if (passwordMatch) {
-        const token = jwt.sign({ name: user.name }, "very secret value", { expiresIn: "1h" });
+        const token = jwt.sign({ _id: user._id, name: user.name }, "very secret value", { expiresIn: "1h" });
         return { message: "Login successfully!", token, id: user._id };
       } else {
         return { message: "Password does not match" };
@@ -57,4 +57,5 @@ async function loginUser(username, password) {
     return { message: err };
   }
 }
+
 export { loginUser,sendVerificationCode };
