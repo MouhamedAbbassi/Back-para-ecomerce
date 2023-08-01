@@ -8,7 +8,7 @@ const reviewSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,    // Reference to the User model
         required: true,
-        ref: 'User'                             // Relation between the review and the user
+        ref: 'userSchema'                             // Relation between the review and the user
     },
 }, 
 {timestamps: true   });                          // Automatically add createdAt and updatedAt fields
