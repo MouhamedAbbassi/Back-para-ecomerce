@@ -2,12 +2,12 @@ import mongoose from 'mongoose';
 
 // schema represent  user's review for product
 const reviewSchema = mongoose.Schema({
-    name: { type: String, required: true },      
+    // name: { type: String, required: true },      
     rating: { type: Number, required: true },   
     comment: { type: String, required: true },  
     user: {
         type: mongoose.Schema.Types.ObjectId,    // Reference to the User model
-        required: true,
+        // required: true,
         ref: 'User'                             // Relation between the review and the user
     },
 }, 
@@ -22,6 +22,25 @@ const productSchema = mongoose.Schema({
     images: [{
         type: String,                         
     }],
+    freeShipping:{
+        type: Boolean,
+        required: true             
+    },
+    fastDelivery:{
+        type: Boolean,
+        required: true             
+    },
+    isInStock:{
+        type: Boolean,
+        required: true             
+    },
+    isOffer:{
+        type: Boolean,
+        required: true ,            
+    },
+    discount:{
+        type:Number,
+    },
     description: {
         type: String,
         required: true                          
@@ -30,11 +49,15 @@ const productSchema = mongoose.Schema({
         type: String,
         required: true                         
     }],
-    reviews: [reviewSchema],                    // Array of reviews embedded in the product
+    about: [{
+        type: String,
+        required: true                         
+    }],
+    reviews: [reviewSchema],                  
     rating: {
         type: Number,
         required: true,
-        default: 0                              // Product rating with default value of 0
+        default: 0                               
     },
     numReviews: {
         type: Number,
