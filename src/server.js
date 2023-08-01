@@ -11,6 +11,12 @@ import ParaRoutes from "./Routes/ParaRoutes.js";
 import cors from "cors";
 import productRoutes from './Routes/ProductRoutes.js';
 
+import session from 'express-session';
+import passport from 'passport';
+import dotenv from 'dotenv';
+import GoogleStrategy from 'passport-google-oauth20';
+
+
 const app = express();
 
 app.use(morgan("dev"));
@@ -34,6 +40,21 @@ app.use("/api/", ProfileRoutes);
 app.use("/api/", ParaRoutes);
 app.use('/api/', productRoutes);
 
+////////////////////ABOUT OAUTH/////////////////////
+
+
+
+
+
+
+
+// Google authentication route
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
+  // Redirect after successful authentication
+  res.redirect('/profile');
+});
 const PORT = 3001;
 app.listen(PORT, () => { console.log(`Server running on port ${PORT}`);
  
