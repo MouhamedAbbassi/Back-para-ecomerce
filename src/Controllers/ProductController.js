@@ -108,14 +108,20 @@ const createProduct = asyncHandler(async (req, res) => {
         }
 
         // Get the product data from the request body, including the uploaded image file name
-        const {name, price, description,category, numReviews } = req.body;
+
+
+        const {name,rating,about,freeShipping,discount,isOffer,fastDelivery,isInStock,price, description,category,numReviews } = req.body;
+
         const images = req.files ? req.files.map((file) => file.filename) : ["default.jpg"];
 
         try {
             // Call the createnewproduct function from ProductService and await the result
-            const createdProduct = await createnewproduct(name,price,description,images,category,numReviews );
+
+            const createdProduct = await createnewproduct(name,rating,about,freeShipping,discount,isOffer,fastDelivery,isInStock,price, description,images,category,numReviews );
+
             res.status(201).json({ message: "Product created successfully", product: createdProduct });
         } catch (err) {
+           
             res.status(500).json({ message: "Failed to create product", error: err.message });
         }
     });

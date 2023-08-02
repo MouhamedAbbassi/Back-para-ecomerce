@@ -45,7 +45,7 @@ async function loginUser(username, password) {
 
       if (passwordMatch) {
         const token = jwt.sign({ name: user.name }, "very secret value", { expiresIn: "1h" });
-        return { message: "Login successfully!", token };
+        return { message: "Login successfully!", token, id: user._id };
       } else {
         return { message: "Password does not match" };
       }

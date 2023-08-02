@@ -12,10 +12,10 @@ const options = {
     servers:[{url:"http://localhost:3001/api/" }],
   },
 
-  apis: ["./src/Routes/Auth.js","./src/Routes/ProductRoutes.js"] // Point to the location of route files
 
- };
+   apis: ["./src/Routes/Auth.js","./src/Routes/ProductRoutes.js","./src/Routes/ProfileRoutes.js"] // Point to the location of route files
+   };
 
-const specs = swaggerJsdoc(options);
+const specs = swaggerJsdoc(options);  
 
 export { swaggerUi, specs };
