@@ -1,32 +1,19 @@
 import asyncHandler from "express-async-handler";
-
 import Order from "../Models/OrderModel.js";
+import * as OrderService from "../Services/OrderService.js";
 
 // Create new order
 
 const addorderitems = asyncHandler(async (req, res) => {
-    console.log(req.user);
-
-    const {orderItems,shippingAddress,paymentMethod,itemsPrice,taxPrice,shippingPrice,totalPrice} = req.body;
-    if(orderItems && orderItems.length === 0){
-        res.status(400);
-        throw new Error("No order items");
-    }else{
-        const order = new Order({
-            user:req.params.id,
-            orderItems,
-            shippingAddress,
-            paymentMethod,
-            itemsPrice,
-            taxPrice,
-            shippingPrice,
-            totalPrice
-        });
-        const createdOrder = await order.save();
-
-        res.status(201).json(createdOrder);
+    // Here, the controller handles the request and response
+    try {
+      const createdOrder = await OrderService.createOrder(req.params.id, req.body);
+      res.status(201).json(createdOrder);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
     }
-});
+  });
+  
     // get order by id
     
 const getOrderById = asyncHandler(async (req, res) => {
@@ -40,47 +27,30 @@ const getOrderById = asyncHandler(async (req, res) => {
     
 });
     // update order to paid
-const updateOrderToPaid = asyncHandler(async (req, res) => {
-    const order  = await Order.findById(req.params.id);
-    if(order){
-        order.isPaid = true;
-        order.paidAt = Date.now();
-        order.paymentResult = {
-            id: req.body.id,
-            status: req.body.status,
-            update_time: req.body.update_time,
-            email_address: req.body.payer.email_address,
-
-        };
-        const updatedOrder = await order.save();
-        res.json(updatedOrder);
-
-    }else{
-        res.status(404);
-        throw new Error("Order Not found");
-    }
-    
-});
+    const updateOrderToPaid = asyncHandler(async (req, res) => {
+        try {
+          const updatedOrder = await OrderService.updateOrderToPaid(req.params.id, req.body);
+          res.json(updatedOrder);
+        } catch (error) {
+          res.status(404).json({ message: error.message });
+        }
+      });
 
 
 // update order to delivered
-    const updateOrderToDelivered = asyncHandler(async (req, res) => {
-        const order  = await Order.findById(req.params.id);
-        if(order){
-            order.isDelivered = true;
-            order.deliveredAt = Date.now();
-            const updatedOrder = await order.save();
-            res.json(updatedOrder);
-    
-        }else{
-            res.status(404);
-            throw new Error("Order Not found");
-        }
-        
-    });
+const updateOrderToDelivered = asyncHandler(async (req, res) => {
+    // Here, the controller handles the request and response
+    try {
+      const updatedOrder = await OrderService.updateOrderToDelivered(req.params.id);
+      res.json(updatedOrder);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  });
+
     // get logged in user orders
 const GetMyOrders = asyncHandler(async (req, res) => {
-    const orders  = await Order.find({user: req.user._id});
+    const orders  = await Order.find({user: req.params.id});
     res.json(orders);
     
 });
