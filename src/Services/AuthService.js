@@ -42,8 +42,14 @@ async function loginUser(username, password) {
     const user = await userSchema.findOne({ $or: [{ email: username }, { phone: username }] });
 
     if (user) {
-      const passwordMatch = await bcrypt.compare(password, user.password);
+      console.log("Entered Password:", password);
+      console.log("Stored Password:", user.password);
+      
+      const passwordMatch = await bcrypt.compare(password.trim(), user.password.trim());
+      console.log("Password Match:", passwordMatch);
+
       if (passwordMatch) {
+        
         const token = jwt.sign({ _id: user._id, name: user.name }, "very secret value", { expiresIn: "1h" });
         return { message: "Login successfully!", token, id: user._id };
       } else {
