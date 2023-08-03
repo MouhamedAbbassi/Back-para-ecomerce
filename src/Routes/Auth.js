@@ -1,5 +1,7 @@
 import express from "express";
 const router = express.Router();
+import passport from "passport";
+
    import * as authController from "../Controllers/AuthController.js";
  import * as ParaController from "../Controllers/ParaController.js";
  import * as forgotpassword from "../Controllers/ForgotPassword.js";
