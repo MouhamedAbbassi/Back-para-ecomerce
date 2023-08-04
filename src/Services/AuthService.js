@@ -35,16 +35,18 @@ const  sendVerificationCode = async(name, email,code,res)=>{
       res.status(400).send({success:false,msg:error.messege});
   }
 };
- //////////////////////// LOGIN //////////////////////////
-async function loginUser(username, password) {
+
+//////////////////////// LOGIN //////////////////////////
+async function loginUser(email, password) {
   try {
-    const user = await userSchema.findOne({ $or: [{ email: username }, { phone: username }] });
+    const user = await userSchema.findOne({ $or: [{ email: email }] });
+    console.log(user);
 
     if (user) {
       console.log("Entered Password:", password);
       console.log("Stored Password:", user.password);
       
-      const passwordMatch = await bcrypt.compare(password, user.password);
+      const passwordMatch = await bcrypt.compare(password.trim(), user.password.trim());
       console.log("Password Match:", passwordMatch);
 
       if (passwordMatch) {

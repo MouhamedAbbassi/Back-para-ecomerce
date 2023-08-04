@@ -56,10 +56,13 @@ export const registerC = async (req, res) => {
 };
 ///////////////////LOGIN//////////////////
 export const login = (req, res) => {
-  const username = req.body.username;
+  const email = req.body.email;
   const password = req.body.password;
 
-  loginUser(username, password)
+  console.log("username",email);
+  console.log("password",password);
+
+  loginUser(email, password)
     .then((result) => {
       res.json(result);
     })
