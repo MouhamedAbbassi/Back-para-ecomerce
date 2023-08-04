@@ -41,10 +41,15 @@ async function loginUser(username, password) {
     const user = await userSchema.findOne({ $or: [{ email: username }, { phone: username }] });
 
     if (user) {
+      console.log("Entered Password:", password);
+      console.log("Stored Password:", user.password);
+      
       const passwordMatch = await bcrypt.compare(password, user.password);
+      console.log("Password Match:", passwordMatch);
 
       if (passwordMatch) {
-        const token = jwt.sign({ name: user.name }, "very secret value", { expiresIn: "1h" });
+        
+        const token = jwt.sign({ _id: user._id, name: user.name }, "very secret value", { expiresIn: "1h" });
         return { message: "Login successfully!", token, id: user._id };
       } else {
         return { message: "Password does not match" };
@@ -57,4 +62,5 @@ async function loginUser(username, password) {
     return { message: err };
   }
 }
+
 export { loginUser,sendVerificationCode };

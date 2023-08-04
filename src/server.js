@@ -18,8 +18,8 @@ import crypto from "crypto";
 import setUpPassport from "./Routes/passport.js";
 import session from "express-session";
 import GoogleStrategy from "passport-google-oauth20";
-
-
+import cartRoutes from "./Routes/CartRoutes.js"
+ 
  
 // Get the current directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -60,6 +60,7 @@ app.use("/api/", authRoute);
 app.use("/api/", ProfileRoutes);
 app.use("/api/", ParaRoutes);
 app.use("/api/", productRoutes);
+app.use("/api/", cartRoutes);
 
 ////////////////////ABOUT OAUTH/////////////////////
 

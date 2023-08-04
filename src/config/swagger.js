@@ -10,8 +10,9 @@ const options = {
       description: "API documentation for Back-end-ParaProject",
     },
     servers:[{url:"http://localhost:3001/api/" }],
+    security: [{ bearerAuth: [] }],
   },
-   apis: ["./src/Routes/Auth.js","./src/Routes/ProductRoutes.js","./src/Routes/ProfileRoutes.js"] // Point to the location of route files
+   apis: ["./src/Routes/Auth.js","./src/Routes/ProductRoutes.js","./src/Routes/ProfileRoutes.js" , "./src/Routes/CartRoutes.js"] // Point to the location of route files
    };
 
 const specs = swaggerJsdoc(options);  
