@@ -10,13 +10,18 @@ import ProfileRoutes from "./Routes/ProfileRoutes.js";
 import ParaRoutes from "./Routes/ParaRoutes.js";
 import cors from "cors";
 import OrderRoutes from './Routes/OrderRoutes.js';
+import wishlistRoutes from './Routes/wishlistRouters.js';
 import productRoutes from './Routes/ProductRoutes.js';
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
-
- 
+//const session = require('express-session');
+//import sessionStore from './Middleware/session-store.js';
 import session from 'express-session';
+//import RedisStore from 'connect-redis';
+//import Redis from 'ioredis';
+
+
 import passport from 'passport';
 import dotenv from 'dotenv';
 import GoogleStrategy from 'passport-google-oauth20';
@@ -61,6 +66,23 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
   // Redirect after successful authentication
   res.redirect('/profile');
 });
+
+
+///////////////////////////////////////////////
+//session middleware
+app.use(
+  session({
+    //store: sessionStore,
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Set to true if using HTTPS
+  })
+);
+app.use('/api/', wishlistRoutes);
+
+
+
 const PORT = 3001;
 app.listen(PORT, () => { console.log(`Server running on port ${PORT}`);
  
