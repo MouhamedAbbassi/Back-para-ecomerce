@@ -11,7 +11,10 @@ import guestSessionMiddleware from '../Middleware/guestSessionMiddleware.js';// 
 router.post('/guest/wishlist/add', guestSessionMiddleware, addGuestWishlistItem);
 router.delete('/guest/wishlist/remove/:productId', guestSessionMiddleware, removeGuestWishlistItem);
 
-router.route("/client/wishlist/add/:id").post(addToWishlist);
+router.route("/client/wishlist/add/:id").post(guestSessionMiddleware, addToWishlist);
+
+
+//router.route("/client/wishlist/add/:id").post(addToWishlist);
 router.route("/client/wishlist/:id").get(getMyWishlist);
 router.route("/client/wishlist/delete/:userId/:productId").delete(removeFromWishlist);
 

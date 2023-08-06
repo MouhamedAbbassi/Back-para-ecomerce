@@ -8,14 +8,39 @@ import GuestWishlist from '../Models/GuestwishlistModel.js';
 //Add a product to the client's wishlist
 const addToWishlist = asyncHandler(async (req, res) => {
   const { productId } = req.body;
-  const userId = req.params.id; 
+  const userId = req.params.id;
+  const guestId = req.session.guestId;
+  const guestSessionId = req.session.guestSessionId;
 
+  // Check if the guest has become a client
+  if (userId && guestId && guestSessionId === req.sessionID) {
+    try {
+      // Move items from guest wishlist to client wishlist
+      const guestWishlist = await GuestWishlist.findOne({ guestId });
+      const clientWishlist = await ClientWishlist.findOne({ userId });
+
+      if (guestWishlist && clientWishlist) {
+        clientWishlist.products.push(...guestWishlist.products);
+        await clientWishlist.save();
+        await GuestWishlist.deleteOne({ guestId: guestId }); // Remove guest wishlist
+      }
+
+      // Clear the guest identifiers from the session
+      req.session.guestId = null;
+      req.session.guestSessionId = null;
+    } catch (error) {
+      console.error('Error moving items from guest wishlist:', error);
+    }
+  }
+
+  // Continue with adding the item to the client wishlist
   const wishlist = await ClientWishlist.findOne({ userId });
 
   if (!wishlist) {
     console.log('Creating a new wishlist...');
     const newWishlist = new ClientWishlist({ userId, products: [productId] });
     await newWishlist.save();
+
     res.status(201).json({ message: 'Item added to wishlist' });
   } else {
     if (wishlist.products.includes(productId)) {
@@ -29,6 +54,8 @@ const addToWishlist = asyncHandler(async (req, res) => {
     }
   }
 });
+
+
 
 
 // Remove a product from the client's wishlist
@@ -79,48 +106,9 @@ const getMyWishlist = asyncHandler(async (req, res) => {
   }
 });
 
-           /*///////////// /* Move a product from a guest's wishlist to a client's wishlist.
-            This function finds the product in the guest's wishlist, removes it from there,
-                          and adds it to the client's wishlist.*//////////////////////////////
-                          
-const moveProductToClientWishlist = asyncHandler(async (req, res) => {
-  const { guestId, userId, productId } = req.body;
-
-  try {
-    console.log("Moving product from guest wishlist to client wishlist...");
-    
-    // Find guest's wishlist
-    const guestWishlist = await GuestWishlist.findOne({ guestId });
-
-    if (!guestWishlist || !guestWishlist.products.includes(productId)) {
-      return res.status(404).json({ success: false, message: "Product not found in guest wishlist" });
-    }
-
-    // Find or create client's wishlist
-    let clientWishlist = await ClientWishlist.findOne({ userId });
-    if (!clientWishlist) {
-      clientWishlist = new ClientWishlist({ userId, products: [] });
-    }
-
-    // Move the product
-    guestWishlist.products = guestWishlist.products.filter(id => id !== productId);
-    clientWishlist.products.push(productId);
-
-    // Save both wishlists
-    await guestWishlist.save();
-    await clientWishlist.save();
-
-    console.log("Product moved successfully!");
-    res.status(200).json({ success: true, message: "Product moved to client wishlist" });
-  } catch (error) {
-    console.error("Error moving product:", error);
-    res.status(500).json({ success: false, message: "An error occurred while moving the product", error: error.message });
-  }
-});
-
-
+  
   /////////////////////////////////////////////////////////////////////////
-  /////////////////////for visiteur///////////////////////////////////////
+  /////////////////////for Guest///////////////////////////////////////
   //const uuid = require('uuid');
   import { v4 as uuidv4 } from 'uuid';
 
@@ -188,4 +176,4 @@ const moveProductToClientWishlist = asyncHandler(async (req, res) => {
 
 
 
-export {addGuestWishlistItem,removeGuestWishlistItem,addToWishlist,removeFromWishlist,getMyWishlist,moveProductToClientWishlist}
+export {addGuestWishlistItem,removeGuestWishlistItem,addToWishlist,removeFromWishlist,getMyWishlist}
