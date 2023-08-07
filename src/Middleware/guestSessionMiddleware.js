@@ -1,8 +1,9 @@
-import generateTemporaryGuestId from '../Controllers/wishlistController.js'; 
+import generateTemporaryGuestId from '../Services/wishlistService.js'; 
 
 function guestSessionMiddleware(req, res, next) {
   if (!req.session.guestId) {
     req.session.guestId = generateTemporaryGuestId();
+    console.log('Initialized guestId:', req.session.guestId);
   }
   
   if (!req.session.guestSessionId) {

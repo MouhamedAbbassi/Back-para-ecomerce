@@ -68,15 +68,15 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 });
 
 
-///////////////////////////////////////////////
-//session middleware
+
+////////////session middleware
 app.use(
   session({
     //store: sessionStore,
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } // Set to true if using HTTPS
+    cookie: { secure: false } // true when using HTTPS
   })
 );
 app.use('/api/', wishlistRoutes);
