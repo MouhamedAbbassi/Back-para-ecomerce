@@ -94,13 +94,18 @@ const getMyWishlist = asyncHandler(async (req, res) => {
     if (result.success) {
       return res.status(201).json({ message: result.message });
     } else {
-      return res.status(500).json({ error: result.error });
+      if (result.message === "Product is already in the guest wishlist") {
+        return res.status(400).json({ error: result.message });
+      } else {
+        return res.status(500).json({ error: result.error });
+      }
     }
   } catch (error) {
     console.error("Error adding wishlist item:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 
   /////////////remove a product from the guest's wishlist

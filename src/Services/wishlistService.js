@@ -68,12 +68,17 @@ const getClientWishlist = asyncHandler(async (userId) => {
     return "guest_" + uuidv4();
   }
   //////////////////////Add a product to the guest's wishlist
-   async function addToGuestWishlist(productId, guestId) {
+  async function addToGuestWishlist(productId, guestId) {
     try {
       let guestWishlist = await GuestWishlist.findOne({ guestId });
   
       if (!guestWishlist) {
         guestWishlist = new GuestWishlist({ guestId, products: [] });
+      }
+  
+      
+      if (guestWishlist.products.includes(productId)) {
+        return { success: false, message: "Product is already in the guest wishlist" };
       }
   
       guestWishlist.products.push(productId);

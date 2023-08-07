@@ -13,7 +13,7 @@ const options = {
   },
 
 
-   apis: ["./src/Routes/Auth.js","./src/Routes/ProductRoutes.js","./src/Routes/ProfileRoutes.js","./src/Routes/OrderRoutes.js"] // Point to the location of route files
+   apis: ["./src/Routes/Auth.js","./src/Routes/ProductRoutes.js","./src/Routes/ProfileRoutes.js","./src/Routes/OrderRoutes.js","./src/Routes/wishlistRouters.js"] // Point to the location of route files
    };
 
 const specs = swaggerJsdoc(options);  
