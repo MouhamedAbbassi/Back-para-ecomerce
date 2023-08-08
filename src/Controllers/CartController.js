@@ -69,9 +69,28 @@ const changeQuantity = asyncHandler(async (req, res) => {
     }
 });
 
+const removeAllItems = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+    try {
+        const cartItems = await cartService.removeAllItemsFromCart(userId);
+        res.status(200).json({
+            success: true,
+            items: cartItems,
+            message: "All items removed from cart",
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message,
+        });
+    }
+});
+
+
 export {
     fetchAllCartItems,
     addToCart,
     removeItem,
     changeQuantity,
+    removeAllItems,
 };

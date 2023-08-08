@@ -1,6 +1,8 @@
+import jwt from "jsonwebtoken";
 import Client from "../Models/Client.js";
- import { loginUser,sendVerificationCode } from "../Services/AuthService.js";
- 
+import { loginUser,sendVerificationCode } from "../Services/AuthService.js";
+import User from "../Models/User.js";
+import bcrypt from "bcrypt";
  
 ///////////////////GENERATION OF CODE CONFIRMATION //////////////////
 function generateVerificationCode() {
@@ -55,20 +57,37 @@ export const registerC = async (req, res) => {
   }
 };
 ///////////////////LOGIN//////////////////
-export const login = (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-
-  console.log("username",email);
-  console.log("password",password);
-
-  loginUser(email, password)
-    .then((result) => {
-      res.json(result);
-    })
-    .catch((err) => {
-      res.json({ message: err });
-    });
+export const login = async(req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email: email }).catch((err) => {
+      console.log(err);
+  });
+  if (user) {
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (!isPasswordCorrect) {
+          const token = jwt.sign({ id: user._id, name: user.name },
+            'very secret value'
+          );
+          return res.json({
+              success: true,
+              message: "Login Successful",
+              user: user,
+              token: token,
+          });
+      }
+      return res.json({
+          token: null,
+          user: null,
+          success: false,
+          message: "Wrong password, please try again",
+      });
+  }
+  return res.json({
+      token: null,
+      user: null,
+      success: false,
+      message: "No account found with entered email",
+  });
 };
 
  

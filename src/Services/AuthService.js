@@ -1,8 +1,8 @@
 import  userSchema  from "../Models/User.js";
- import bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
- import  config  from "../config/config.js";
+import  config  from "../config/config.js";
 
 
 /////////////////// SEND EMAIL //////////////////
@@ -40,13 +40,12 @@ const  sendVerificationCode = async(name, email,code,res)=>{
 async function loginUser(email, password) {
   try {
     const user = await userSchema.findOne({ $or: [{ email: email }] });
-    console.log(user);
-
+  
     if (user) {
       console.log("Entered Password:", password);
       console.log("Stored Password:", user.password);
       
-      const passwordMatch = await bcrypt.compare(password.trim(), user.password.trim());
+      const passwordMatch = await bcrypt.compare(password, user.password);
       console.log("Password Match:", passwordMatch);
 
       if (passwordMatch) {

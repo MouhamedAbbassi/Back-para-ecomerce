@@ -4,6 +4,7 @@ import {
   fetchAllCartItems,
   removeItem,
   changeQuantity,
+  removeAllItems
 } from "../Controllers/CartController.js";
 import { protect } from "../Middlewares/verifyToken.js";
 
@@ -64,7 +65,7 @@ const router = Router();
  *       - bearerAuth: []   
  */
 
-router.post("/cart/add-item/:userId/:productId", protect, addToCart);
+router.post("/cart/add-item/:userId/:productId", addToCart);
 
  
 /**
@@ -227,6 +228,7 @@ router.delete("/cart/remove-item/:userId/:productId", protect, removeItem);
  *                   type: string
  *                   example: Error message describing the issue
  */
-router.post("/cart/update-quantity/:userId", protect, changeQuantity);
+router.post("/cart/update-quantity/:userId", changeQuantity);
+router.delete("/cart/:userId/remove-all", protect, removeAllItems);
 
 export default router;

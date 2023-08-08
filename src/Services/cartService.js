@@ -33,8 +33,9 @@ const addItemToCart = async (userId, productId) => {
     }
     const newUser = await User.findById(userId);
     const cartItems = await Cart.findById(newUser.cart).populate("items.product");
-    return cartItems.items;
+    return cartItems.items; // Should return items with full product information
 };
+
 
 const removeItemFromCart = async (userId, productId) => {
     const user = await User.findById(userId);
@@ -47,18 +48,37 @@ const removeItemFromCart = async (userId, productId) => {
     return cartItems.items;
 };
 
+// cartUtils.js
+
 const changeCartItemQuantity = async (userId, productId, quantity) => {
     const user = await User.findById(userId);
-    let cart = await Cart.findById(user.cart);
-    const productExist = cart.items.some(({ product }) => product.toString() === productId);
+    let cart = await Cart.findById(user.cart).populate("items.product");
+    
+    const productExist = cart.items.some(({ product }) => product._id.toString() === productId);
+    
     if (productExist) {
-        let items = cart.items.map((item) =>
-            item.product.toString() === productId ? { ...item._doc, quantity: quantity } : item
+        cart.items = cart.items.map((item) =>
+            item.product._id.toString() === productId ? { ...item, quantity: quantity } : item
         );
-        cart.items = items;
+        
         cart = await cart.save();
     }
+    
     return cart.items;
+};
+
+
+const removeAllItemsFromCart = async (userId) => {
+    const user = await User.findById(userId);
+     console.log(user)
+    if (user.cart !== undefined) {
+        const cart = await Cart.findById(user.cart);
+        if (cart) {
+            cart.items = [];
+            await cart.save();
+        }
+    }
+    return [];
 };
 
 export {
@@ -66,4 +86,5 @@ export {
     addItemToCart,
     removeItemFromCart,
     changeCartItemQuantity,
+    removeAllItemsFromCart,
 };
