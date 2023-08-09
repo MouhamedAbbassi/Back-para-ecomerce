@@ -3,7 +3,7 @@ import Client from "../Models/Client.js";
 import { loginUser,sendVerificationCode } from "../Services/AuthService.js";
 import User from "../Models/User.js";
 import bcrypt from "bcrypt";
- 
+import  userSchema  from "../Models/User.js";
 ///////////////////GENERATION OF CODE CONFIRMATION //////////////////
 function generateVerificationCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -56,38 +56,62 @@ export const registerC = async (req, res) => {
     res.status(500).json({ message: "An error occurred", error });
   }
 };
+
+
 ///////////////////LOGIN//////////////////
-export const login = async(req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email: email }).catch((err) => {
-      console.log(err);
-  });
-  if (user) {
-      const isPasswordCorrect = await bcrypt.compare(password, user.password);
-      if (!isPasswordCorrect) {
-          const token = jwt.sign({ id: user._id, name: user.name },
-            'very secret value'
-          );
-          return res.json({
-              success: true,
-              message: "Login Successful",
-              user: user,
-              token: token,
-          });
-      }
-      return res.json({
-          token: null,
-          user: null,
-          success: false,
-          message: "Wrong password, please try again",
-      });
-  }
-  return res.json({
-      token: null,
-      user: null,
-      success: false,
-      message: "No account found with entered email",
-  });
+// export const login = (req, res) => {
+//   const email = req.body.email;
+//   const password = req.body.password;
+
+//   console.log(email)
+//   console.log(password)
+//   loginUser(email, password)
+//     .then((result) => {
+//       res.json(result);
+//     })
+//     .catch((err) => {
+//       res.json({ message: err });
+//     });
+// };
+
+export const login = async (req, res) => {
+	try {
+		const existUser = await userSchema.findOne({ email: req.body.email });
+
+		if (!existUser) {
+			return res.status(401).json({ message: "Wrong Email/Password" });
+		}
+
+		console.log(existUser);
+
+		const validPassword = await bcrypt.compare(
+			req.body.password,
+			existUser.password
+		);
+
+		console.log(validPassword);
+
+		if (validPassword) {
+			return res.status(401).json({ message: "Wrong Email/Password" });
+		}
+
+		const token = jwt.sign(
+			{
+				_id: existUser._id,
+				name: existUser.name
+			},
+			"very secret value",
+			{ expiresIn: "2 days" }
+		);
+
+		existUser.lastLogin = Date.now();
+		await existUser.save();
+
+		return res.status(200).json({ user: existUser, token: token });
+	} catch (err) {
+		console.error(err); // Log the error for debugging
+		return res.status(500).json({ message: "Internal Server Error" });
+	}
 };
 
- 
+

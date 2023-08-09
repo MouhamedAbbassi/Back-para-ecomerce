@@ -36,32 +36,60 @@ const  sendVerificationCode = async(name, email,code,res)=>{
   }
 };
 
-//////////////////////// LOGIN //////////////////////////
-async function loginUser(email, password) {
-  try {
-    const user = await userSchema.findOne({ $or: [{ email: email }] });
-  
-    if (user) {
-      console.log("Entered Password:", password);
-      console.log("Stored Password:", user.password);
+ //////////////////////// LOGIN //////////////////////////
+//  async function loginUser(email, password) {
+//   try {
+//      const user = await userSchema.findOne({ $or: [{ email: email }] });
       
-      const passwordMatch = await bcrypt.compare(password, user.password);
-      console.log("Password Match:", passwordMatch);
+//     if (user) {
+//       const passwordMatch = await bcrypt.compare(password, user.password);
 
-      if (passwordMatch) {
-        
-        const token = jwt.sign({ _id: user._id, name: user.name }, "very secret value", { expiresIn: "1h" });
-        return { message: "Login successfully!", token, id: user._id };
-      } else {
-        return { message: "Password does not match" };
-      }
-    } else {
-      return { message: "No user found!" };
-    }
-  } catch (err) {
-    console.log(err);
-    return { message: err };
-  }
-}
+//       if (passwordMatch) {
+//         const token = jwt.sign({ _id : user._id, name: user.name }, "very secret value", { expiresIn: "1h" });
+//         return { message: "Login successfully!", token };
+//       } else {
+//         return { message: "Password does not match" };
+//       }
+//     } else {
+//       return { message: "No user found!" };
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     return { message: err };
+//   }
+// }
+
+const loginUser = async (req, res) => {
+	let existUser = null;
+	try {
+		if ((req.body.loginInfo)) {
+			existUser = await userSchema.findOne({ email: req.body.loginInfo });
+		} 
+		if (!existUser) {
+			return res.status(401).json("Wrong Email/Password");
+		}
+
+		const validPassword = await bcrypt.compare(
+			req.body.password,
+			existUser.password
+		);
+
+		if (!validPassword) {
+			return res.status(401).json("Wrong Email/Password");
+		}
+		const token = jwt.sign(
+			{
+        _id : existUser._id, name: existUser.name
+			},
+      "very secret value",
+			{ expiresIn: "2 days" }
+		);
+		existUser.lastLogin = Date.now();
+		await existUser.save();
+		return res.status(200).json({ user: existUser, token: token });
+	} catch (err) {
+		return res.status(500).json(err);
+	}
+};
 
 export { loginUser,sendVerificationCode };

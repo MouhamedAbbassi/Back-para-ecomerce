@@ -60,10 +60,8 @@ const changeCartItemQuantity = async (userId, productId, quantity) => {
         cart.items = cart.items.map((item) =>
             item.product._id.toString() === productId ? { ...item, quantity: quantity } : item
         );
-        
         cart = await cart.save();
     }
-    
     return cart.items;
 };
 
