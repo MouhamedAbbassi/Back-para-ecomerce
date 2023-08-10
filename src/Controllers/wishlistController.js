@@ -25,9 +25,16 @@ const addToWishlist = asyncHandler(async (req, res) => {
     }
   }
 
-  await addToClientWishlist(userId, productId);
+  //await addToClientWishlist(userId, productId);
 
-  res.status(201).json({ message: "Item added to wishlist" });
+  //res.status(201).json({ message: "Item added to wishlist" });
+  const itemAdded = await addToClientWishlist(userId, productId);
+
+  if (itemAdded) {
+    res.status(201).json({ message: "Item added to wishlist" });
+  } else {
+    res.status(200).json({ message: "Product is already in the wishlist" });
+  }
 });
 
 

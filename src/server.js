@@ -15,14 +15,8 @@ import productRoutes from './Routes/ProductRoutes.js';
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
-//const session = require('express-session');
-//import sessionStore from './Middleware/session-store.js';
-//import { RedisStore, redisClient } from './Middleware/session-store.js'; 
-//import sessionMiddleware from './Middleware/session-store.js';
 import session from 'express-session';
-//import RedisStore from 'connect-redis';
-//import Redis from 'ioredis';
-
+import redisStore from '../src/Middleware/session-store.js';
 
 
 import passport from 'passport';
@@ -73,66 +67,14 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 
 
 ////////////session middleware
-/*app.use(
-  session({
-    store: sessionStore,
-    secret: 'your-secret-key',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // true when using HTTPS
-  })
-);*/
-
-//import session from 'express-session';
-// import Redis from 'ioredis';
-// import connectRedis from 'connect-redis';
-
-
-// const redisClient = new Redis({
-//   // Configuration for your Redis Cloud instance
-//   host: 'redis-18360.c304.europe-west1-2.gce.cloud.redislabs.com', //Redis Cloud hostname
-//   port: '18360',     // Redis Cloud port
-//   password: 'Et9sDbDfT1Ngp4fiwnpEOxthQjKPZQZt', // Redis Cloud password
-// });
-// // const RedisStore = session.Store;
-//  const RedisStore = new connectRedis(session);
-
-
-// const sessionMiddleware = session({
-//   store: new RedisStore({ client: redisClient }),
-//   secret: 'your-secret-key',
-//   resave: false,
-//   saveUninitialized: true,
-//   cookie: { secure: false } // true when using HTTPS
-// });
-
-import Redis from 'ioredis';
-import connectRedis from 'connect-redis';
-import {createClient} from "redis"
-import RedisStore from "connect-redis"
-
-const redisClient = new Redis({
-  host: 'redis-18360.c304.europe-west1-2.gce.cloud.redislabs.com',
-  port: 18360,
-  password: 'Et9sDbDfT1Ngp4fiwnpEOxthQjKPZQZt',
-});
-
-
-let redisStore = new RedisStore({
-  client: redisClient,
-
-});
-
 app.use(
   session({
     store: redisStore,
     saveUninitialized: false,
-    secret: "keyboard cat",
+    resave: false,
+    secret: 'keyboard cat',
   })
 );
-
-
-
 
 // app.use(sessionMiddleware);
 app.use('/api/', wishlistRoutes);
