@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-mongoose.connect('mongodb://127.0.0.1:27017/ParaDB')
+mongoose.connect('mongodb+srv://paraecommerce:paraecommerce@cluster0.gitjjrk.mongodb.net/?retryWrites=true&w=majority')
 .then(()=>{
 
     console.log('db connected');
