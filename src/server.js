@@ -17,9 +17,12 @@ import { dirname } from "path";
 
 //const session = require('express-session');
 //import sessionStore from './Middleware/session-store.js';
+//import { RedisStore, redisClient } from './Middleware/session-store.js'; 
+//import sessionMiddleware from './Middleware/session-store.js';
 import session from 'express-session';
 //import RedisStore from 'connect-redis';
 //import Redis from 'ioredis';
+
 
 
 import passport from 'passport';
@@ -70,16 +73,44 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 
 
 ////////////session middleware
-app.use(
+/*app.use(
   session({
-    //store: sessionStore,
+    store: sessionStore,
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // true when using HTTPS
   })
-);
+);*/
+
+//import session from 'express-session';
+import Redis from 'ioredis';
+import connectRedis from 'connect-redis';
+
+const redisClient = new Redis({
+  // Configuration for your Redis Cloud instance
+  host: 'redis-18360.c304.europe-west1-2.gce.cloud.redislabs.com', //Redis Cloud hostname
+  port: '18360',     // Redis Cloud port
+  password: 'Et9sDbDfT1Ngp4fiwnpEOxthQjKPZQZt', // Redis Cloud password
+});
+//const RedisStore = session.Store;
+const RedisStore = new connectRedis(session);
+console.log(redisClient);
+const sessionMiddleware = session({
+  store: new RedisStore({ client: redisClient }),
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // true when using HTTPS
+});
+
+app.use(sessionMiddleware);
 app.use('/api/', wishlistRoutes);
+app.get('/', (req, res) => {
+  console.log('Request Redis Client:', redisClient);
+  res.send('Hello, Express session with Redis!');
+})
+
 
 
 
