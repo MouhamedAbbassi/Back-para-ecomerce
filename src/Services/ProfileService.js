@@ -66,5 +66,18 @@ async function updateUserProfile(id, name, phone, age, address, gender) {
         throw { status: 500, message: error };
      }
   }
+ ////////////////////////GET USER BY ID//////////////////////////
+ async function getUserById(id) {
+  try {
+      const user = await User.findById(id);
+      if (!user) {
+          throw { status: 404, message: `User not found :${id}` };
+      }else{
+       return { message: "User Info:",user };
+      } 
+      } catch (error) {
+      throw { status: 500, message: error };
+   }
+}
 
-  export { updateUserProfile,updateUserPassword,updateUserImage };
+  export { updateUserProfile,updateUserPassword,updateUserImage,getUserById };

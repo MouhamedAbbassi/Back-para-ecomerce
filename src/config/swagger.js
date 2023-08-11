@@ -11,13 +11,11 @@ const options = {
     },
     servers:[{url:"http://localhost:3001/api/" }],
   },
-<<<<<<< HEAD
-  apis: ["./src/Routes/Auth.js","./src/Routes/ProductRoutes.js"] // Point to the location of route files
-=======
-  apis: ["./src/Routes/Auth.js","./src/Routes/ProfileRoutes.js"] // Point to the location of route files
->>>>>>> e51dec67327b5f32930fa24266ffedf9a3b0e21d
- };
 
-const specs = swaggerJsdoc(options);
+
+   apis: ["./src/Routes/Auth.js","./src/Routes/ProductRoutes.js","./src/Routes/ProfileRoutes.js","./src/Routes/OrderRoutes.js","./src/Routes/wishlistRouters.js"] // Point to the location of route files
+   };
+
+const specs = swaggerJsdoc(options);  
 
 export { swaggerUi, specs };

@@ -63,10 +63,12 @@ router.route('/products').get(getProducts);
  *               numReviews:
  *                 type: number
  *                 description: Number of product reviews.
- *               image:
- *                 type: string
- *                 format: binary
- *                 description: Product image (file upload).
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Product images (multiple file upload, maximum 10 files allowed).
  *             required:
  *               - name
  *               - price

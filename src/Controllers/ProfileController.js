@@ -1,4 +1,4 @@
-import { updateUserProfile ,updateUserPassword, updateUserImage} from "../Services/ProfileService.js";
+ import { updateUserProfile ,updateUserPassword, updateUserImage,getUserById} from "../Services/ProfileService.js";
 import multer from "multer";
  
 
@@ -45,6 +45,19 @@ export async function updateImage(req, res) {
 
   try {
     const result = await updateUserImage(id,filename);
+    return res.json(result);
+  } catch (err) { 
+     return res.status(500).json({ message:err });
+  }
+}
+
+///////////////////getUserInfo//////////////////
+
+export async function getUserInfo(req, res) {
+  const id = req.params.id;
+
+  try {
+    const result = await getUserById(id);
     return res.json(result);
   } catch (err) { 
      return res.status(500).json({ message:err });
