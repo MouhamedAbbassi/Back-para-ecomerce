@@ -1,10 +1,11 @@
 import Product from "../models/productModel.js";
- 
+import ProductF from "../Models/ProductFournisseur.js";
+import userSchema from "../Models/User.js"
  
  // Create a new product
 
-async function  createnewproduct(name,rating,about,freeShipping,discount,isOffer,fastDelivery,isInStock,price, description,images,category,numReviews) {
-    
+async function  createnewproduct(name,rating,about,freeShipping,discount,isOffer,fastDelivery,isInStock,price, description,images,category,numReviews,UserId) {
+  console.log("service:" ,UserId);
         const product = new Product({
             name: name,
             price: price,
@@ -21,8 +22,22 @@ async function  createnewproduct(name,rating,about,freeShipping,discount,isOffer
             isInStock:isInStock,
           });
      
+         // const createdProduct = await product.save();
+          //return createdProduct;
+         user = await userSchema.findById(UserId)
+         console.log('service:',user);
+         if (user){
+          console.log("service:" ,user);
+          if (user.role === "fournisseur"){
+          const createdProductF = await ProductF.save();
+          return createdProductF;
+         }
+         else if (user.role === "admin"){
           const createdProduct = await product.save();
           return createdProduct;
+         }
+        }
+        return  "somthing went wrong";
   }
 
                //  Update product

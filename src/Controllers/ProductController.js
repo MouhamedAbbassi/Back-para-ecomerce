@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Product from "../models/productModel.js";
+import ProductF from "../Models/ProductFournisseur.js";
 import {createnewproduct,deleteProducts,updateProducts } from "../Services/ProductService.js";
 import multer from "multer";
 import path from "path";
@@ -113,12 +114,12 @@ const createProduct = asyncHandler(async (req, res) => {
         const {name,rating,about,freeShipping,discount,isOffer,fastDelivery,isInStock,price, description,category,numReviews } = req.body;
 
         const images = req.files ? req.files.map((file) => file.filename) : ["default.jpg"];
-
+            const UserId = req.params.id ;
+            console.log('UserId',UserId );
         try {
             // Call the createnewproduct function from ProductService and await the result
 
-            const createdProduct = await createnewproduct(name,rating,about,freeShipping,discount,isOffer,fastDelivery,isInStock,price, description,images,category,numReviews );
-
+            const createdProduct = await createnewproduct(name,rating,about,freeShipping,discount,isOffer,fastDelivery,isInStock,price, description,images,category,numReviews,UserId );
             res.status(201).json({ message: "Product created successfully", product: createdProduct });
         } catch (err) {
            

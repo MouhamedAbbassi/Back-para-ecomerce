@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import { addorderitems, GetMyOrders, getOrderById, GetOrders, updateOrderToPaid,updateOrderToDelivered } from "../Controllers/OrderController.js";
-
+import { client, admin } from '../Middleware/Authorization.js';
 
 /**
  * @swagger
@@ -73,8 +73,7 @@ import { addorderitems, GetMyOrders, getOrderById, GetOrders, updateOrderToPaid,
  *       '400':
  *         description: Bad request. No order items provided.
  */
-router.route("/orders/create/:id").post(addorderitems);
-
+router.route("/orders/create/:id").post(client,admin,addorderitems);
 
 /**
  * @swagger
@@ -92,7 +91,7 @@ router.route("/orders/create/:id").post(addorderitems);
  *               items:
  *                 $ref: '#/components/schemas/Order'
  */
-router.route("/orders").get(GetOrders);
+router.route("/orders").get(admin,GetOrders);
 
 /**
  * @swagger
@@ -119,7 +118,7 @@ router.route("/orders").get(GetOrders);
  *       '404':
  *         description: User not found.
  */
-router.route("/myorders/:id").get(GetMyOrders);
+router.route("/myorders/:id").get(client,admin,GetMyOrders);
 
 /**
  * @swagger
@@ -144,7 +143,7 @@ router.route("/myorders/:id").get(GetMyOrders);
  *       '404':
  *         description: Order not found.
  */
-router.route("/orders/:id").get(getOrderById);
+router.route("/orders/:id").get(client,getOrderById);
 
 /**
  * @swagger
@@ -170,7 +169,7 @@ router.route("/orders/:id").get(getOrderById);
  *       '404':
  *         description: Order not found.
  */
-router.route("/orders/:id/pay").put(updateOrderToPaid);
+router.route("/orders/:id/pay").put(client,updateOrderToPaid);
 
 /**
  * @swagger
@@ -195,7 +194,7 @@ router.route("/orders/:id/pay").put(updateOrderToPaid);
  *       '404':
  *         description: Order not found.
  */
-router.route("/orders/:id/deliver").put(updateOrderToDelivered);
+router.route("/orders/:id/deliver").put(client,admin,updateOrderToDelivered);
 
 /**
  * @swagger

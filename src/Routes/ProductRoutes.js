@@ -3,8 +3,9 @@ import express from 'express';
 // import * as productController from "../Controllers/ProductControler"
  
 import { createProduct, createProductReview, deleteProduct, getProductById, getProducts, updateProduct } from '../Controllers/ProductController.js';
- 
 import { upload } from '../Controllers/ProductController.js'; 
+import { client, admin,supplier} from '../Middleware/Authorization.js';
+
 const router = express.Router();
  
 
@@ -34,7 +35,7 @@ const router = express.Router();
  *         description: Internal server error.
  */
 
-router.route('/products').get(getProducts);
+router.route('/products').get(client,admin,supplier,getProducts);
 
 /**
  * @swagger
@@ -111,32 +112,8 @@ router.route('/products').get(getProducts);
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products').post(createProduct);
-// Middleware to protect routes and ensure authentication
-// Route-specific authentication middleware
-const protect = async (req, res, next) => {
-    try {
-      const token = req.headers.authorization;
-  
-      // Verify the token and extract user ID (assuming your token contains user ID)
-      const { userId } = verifyToken(token);
-  
-      // Fetch user data from the database using the user ID
-      const user = await user.findById(userId);
-  
-      if (!user) {
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
-  
-      // Set the authenticated user data in req.user
-      req.user = user;
-  
-      // Continue to the next middleware or route handler
-      next();
-    } catch (err) {
-      res.status(401).json({ message: 'Unauthorized' });
-    }
-  };
+router.route('/products/:id').post(createProduct);
+
   
 /**
  * @swagger
@@ -221,7 +198,7 @@ const protect = async (req, res, next) => {
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/api/products/:id/reviews').post(protect,createProductReview);
+router.route('/api/products/:id/reviews').post(client,createProductReview);
 
 /**
  * @swagger
@@ -301,7 +278,7 @@ router.route('/api/products/:id/reviews').post(protect,createProductReview);
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products/:id').get(getProductById).delete(deleteProduct);
+router.route('/products/:id').get(getProductById).delete(admin,supplier,deleteProduct);
 
 /**
  * @swagger
@@ -382,7 +359,7 @@ router.route('/products/:id').get(getProductById).delete(deleteProduct);
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products/:id').put(updateProduct);
+router.route('/products/:id').put(admin,supplier,updateProduct);
 
 router.post('/products/create', upload, createProduct);
 
