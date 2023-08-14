@@ -1,4 +1,4 @@
-import  userSchema  from '../Models/Uthis email does not exist.ser.js';
+import  userSchema  from '../Models/User.js';
 import  config  from '../config/config.js';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
@@ -55,7 +55,7 @@ async function forgotPass(req,res,email) {
             res.status(200).send({success:true,msg:"please check your inbox of mail."});
 
         } else {
-            res.status(200).send({success:true,msg:""});
+            res.status(200).send({success:true,msg:"this email does not exist."});
         }
         
     
