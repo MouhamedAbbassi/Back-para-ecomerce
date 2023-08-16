@@ -1,15 +1,8 @@
-/* eslint-disable quotes */
-import express from 'express';
-// import * as productController from "../Controllers/ProductControler"
+ import express from 'express';
+ import { upload } from '../Controllers/ProductController.js'; 
+ import ProductController from '../Controllers/ProductController.js';
+ const router = express.Router();
  
-//import { createProduct, createProductReview, deleteProduct, getProductById, getProducts, updateProduct } from '../Controllers/ProductController.js';
-import { upload } from '../Controllers/ProductController.js'; 
-//import { client, admin,supplier} from '../Middleware/Authorization.js';
-import ProductController from '../Controllers/ProductController.js';
-import authorizationMiddleware from '../Middleware/Authorization.js';
-const router = express.Router();
- 
-
 /**
  * @swagger
  * tags:
@@ -113,9 +106,8 @@ router.route('/products').get(ProductController.getProducts);
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products/:id').post(authorizationMiddleware,ProductController.createProduct);
-//router.post('/products/:id',authorizationMiddleware,ProductController.createProduct);
-  
+router.route('/products/:id').post(ProductController.createProduct);
+   
 /**
  * @swagger
  * /api/products/{id}/reviews:
@@ -203,7 +195,7 @@ router.route('/api/products/:id/reviews').post(ProductController.createProductRe
 
 /**
  * @swagger
- * /products/{id}:
+ * /products/delete/{id}:
  *   get:
  *     summary: Get a specific product by ID
  *     tags: [Products]
@@ -279,11 +271,11 @@ router.route('/api/products/:id/reviews').post(ProductController.createProductRe
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products/:id').get(ProductController.getProductById).delete(ProductController.deleteProduct);
+router.route('/products/delete/:id').get(ProductController.getProductById).delete(ProductController.deleteProduct);
 
 /**
  * @swagger
- * /products/{id}:
+ * /products/update/{id}:
  *   put:
  *     summary: Update a specific product by ID
  *     tags: [Products]
@@ -360,7 +352,7 @@ router.route('/products/:id').get(ProductController.getProductById).delete(Produ
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products/:id').put(ProductController.updateProduct);
+router.route('/products/update/:id').put(ProductController.updateProduct);
 
 router.post('/products/create', upload, ProductController.createProduct);
 

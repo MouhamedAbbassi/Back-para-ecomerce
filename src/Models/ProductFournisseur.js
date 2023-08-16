@@ -17,13 +17,6 @@ const reviewSchema = mongoose.Schema({
    
 //  schema represent the product 
 const productSchema = mongoose.Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,    // Reference to the User model
-
-        required: true,
-        ref: 'userSchema'                             // Relation between the review and the user
-
-    },
     name: {
         type: String,
         required: true                          
