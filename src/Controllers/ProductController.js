@@ -1,10 +1,10 @@
 import asyncHandler from "express-async-handler";
 import Product from "../models/productModel.js";
-import {createnewproduct,deleteProducts,updateProducts } from "../Services/ProductService.js";
+ import {createnewproduct,deleteProducts,updateProducts } from "../Services/ProductService.js";
 import multer from "multer";
 import path from "path";
 
-// Fetch all products
+///////////////////////////Fetch all products/////////////////////////////
 const getProducts = asyncHandler(async (req, res) => {
     // Extract query parameters from the request
     const Cg = req.query.Cg;            // Category filter
@@ -12,13 +12,7 @@ const getProducts = asyncHandler(async (req, res) => {
     const from = req.query.from;        // Minimum price range
     const to = req.query.to;            // Maximum price range
     const keyword = req.query.keyword
-        ? {
-              name: {
-                  $regex: req.query.keyword,
-                  $options: "i",
-              },
-          }
-        : {};                          // Keyword search for product name
+        ? { name: { $regex: req.query.keyword, $options: "i", },} : {};   // Keyword search for product name
 
     console.log(req.query.keyword);
 
@@ -84,8 +78,6 @@ const deleteProduct = asyncHandler(async (req, res) => {
       res.status(500).json({ error: err.message });
     }
   });
-
-
 // Multer configuration for image upload
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -96,37 +88,28 @@ const storage = multer.diskStorage({
         cb(null, uniqueSuffix + path.extname(file.originalname));
     },
 });
+export const upload = multer({ storage: storage }).array("images",10);
 
-const upload = multer({ storage: storage }).array("images",10);
-
-// Create a new product
+////////////////////////////// Create a new product///////////////////////
 const createProduct = asyncHandler(async (req, res) => {
     // Upload the product image first
     upload(req, res, async function (err) {
         if (err) {
             return res.status(400).json({ message: "Image upload failed!" });
         }
-
         // Get the product data from the request body, including the uploaded image file name
-
-
         const {name,rating,about,freeShipping,discount,isOffer,fastDelivery,isInStock,price, description,category,numReviews } = req.body;
-
         const images = req.files ? req.files.map((file) => file.filename) : ["default.jpg"];
-
-        try {
+        const UserId = req.params.id ;
+         try {
             // Call the createnewproduct function from ProductService and await the result
-
-            const createdProduct = await createnewproduct(name,rating,about,freeShipping,discount,isOffer,fastDelivery,isInStock,price, description,images,category,numReviews );
-
+            const createdProduct = await createnewproduct(name,rating,about,freeShipping,discount,isOffer,fastDelivery,isInStock,price, description,images,category,numReviews,UserId );
             res.status(201).json({ message: "Product created successfully", product: createdProduct });
-        } catch (err) {
-           
+        } catch (err) {      
             res.status(500).json({ message: "Failed to create product", error: err.message });
         }
     });
 });
-
       // Update an existing product by its ID
 const updateProduct = asyncHandler(async (req, res) => {
     const { name, price, description, category, Images, } = req.body;
@@ -174,12 +157,12 @@ const createProductReview = asyncHandler(async (req, res) => {
 });
 
 
-export {
+export default {
     getProducts,
     getProductById,
     deleteProduct,
     createProduct,
     updateProduct,
     createProductReview,
-    upload,
+    upload
 };

@@ -11,7 +11,7 @@ async function getAllFournisseurs() {
     }
   }
 
-///////////////////DELETE FOURNISSEUR//////////////////
+///////////////////DELETE FOURNISSEUR////////////////////////////
 async function DeleteFourniseur(id) {
     try {
    

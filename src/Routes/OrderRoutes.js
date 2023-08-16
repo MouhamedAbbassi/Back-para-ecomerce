@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import { addorderitems, GetMyOrders, getOrderById, GetOrders, updateOrderToPaid,updateOrderToDelivered } from "../Controllers/OrderController.js";
-
+//import { client, admin } from '../Middleware/Authorization.js';
 
 /**
  * @swagger
@@ -74,7 +74,6 @@ import { addorderitems, GetMyOrders, getOrderById, GetOrders, updateOrderToPaid,
  *         description: Bad request. No order items provided.
  */
 router.route("/orders/create/:id").post(addorderitems);
-
 
 /**
  * @swagger

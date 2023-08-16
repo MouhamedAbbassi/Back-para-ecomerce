@@ -45,6 +45,10 @@ const userSchema = new Schema({
   },
   isEmailVerified:{
    type: Boolean,
+    },
+    isAdmin: { 
+      type: Boolean,
+      default: false, 
     }
 }, { timestamps: true });
 

@@ -1,13 +1,8 @@
-/* eslint-disable quotes */
-import express from 'express';
-// import * as productController from "../Controllers/ProductControler"
+ import express from 'express';
+ import { upload } from '../Controllers/ProductController.js'; 
+ import ProductController from '../Controllers/ProductController.js';
+ const router = express.Router();
  
-import { createProduct, createProductReview, deleteProduct, getProductById, getProducts, updateProduct } from '../Controllers/ProductController.js';
- 
-import { upload } from '../Controllers/ProductController.js'; 
-const router = express.Router();
- 
-
 /**
  * @swagger
  * tags:
@@ -34,7 +29,7 @@ const router = express.Router();
  *         description: Internal server error.
  */
 
-router.route('/products').get(getProducts);
+router.route('/products').get(ProductController.getProducts);
 
 /**
  * @swagger
@@ -111,33 +106,8 @@ router.route('/products').get(getProducts);
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products').post(createProduct);
-// Middleware to protect routes and ensure authentication
-// Route-specific authentication middleware
-const protect = async (req, res, next) => {
-    try {
-      const token = req.headers.authorization;
-  
-      // Verify the token and extract user ID (assuming your token contains user ID)
-      const { userId } = verifyToken(token);
-  
-      // Fetch user data from the database using the user ID
-      const user = await user.findById(userId);
-  
-      if (!user) {
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
-  
-      // Set the authenticated user data in req.user
-      req.user = user;
-  
-      // Continue to the next middleware or route handler
-      next();
-    } catch (err) {
-      res.status(401).json({ message: 'Unauthorized' });
-    }
-  };
-  
+router.route('/products/:id').post(ProductController.createProduct);
+   
 /**
  * @swagger
  * /api/products/{id}/reviews:
@@ -221,11 +191,11 @@ const protect = async (req, res, next) => {
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/api/products/:id/reviews').post(protect,createProductReview);
+router.route('/api/products/:id/reviews').post(ProductController.createProductReview);
 
 /**
  * @swagger
- * /products/{id}:
+ * /products/delete/{id}:
  *   get:
  *     summary: Get a specific product by ID
  *     tags: [Products]
@@ -301,11 +271,11 @@ router.route('/api/products/:id/reviews').post(protect,createProductReview);
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products/:id').get(getProductById).delete(deleteProduct);
-
+router.route('/products/delete/:id').get(ProductController.getProductById).delete(ProductController.deleteProduct);
+//bla bla bla 
 /**
  * @swagger
- * /products/{id}:
+ * /products/update/{id}:
  *   put:
  *     summary: Update a specific product by ID
  *     tags: [Products]
@@ -382,9 +352,9 @@ router.route('/products/:id').get(getProductById).delete(deleteProduct);
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products/:id').put(updateProduct);
+router.route('/products/update/:id').put(ProductController.updateProduct);
 
-router.post('/products/create', upload, createProduct);
+router.post('/products/create', upload, ProductController.createProduct);
 
 /**
  * @swagger
