@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import { addorderitems, GetMyOrders, getOrderById, GetOrders, updateOrderToPaid,updateOrderToDelivered } from "../Controllers/OrderController.js";
-import { client, admin } from '../Middleware/Authorization.js';
+//import { client, admin } from '../Middleware/Authorization.js';
 
 /**
  * @swagger
@@ -73,7 +73,7 @@ import { client, admin } from '../Middleware/Authorization.js';
  *       '400':
  *         description: Bad request. No order items provided.
  */
-router.route("/orders/create/:id").post(client,admin,addorderitems);
+router.route("/orders/create/:id").post(addorderitems);
 
 /**
  * @swagger
@@ -91,7 +91,7 @@ router.route("/orders/create/:id").post(client,admin,addorderitems);
  *               items:
  *                 $ref: '#/components/schemas/Order'
  */
-router.route("/orders").get(admin,GetOrders);
+router.route("/orders").get(GetOrders);
 
 /**
  * @swagger
@@ -118,7 +118,7 @@ router.route("/orders").get(admin,GetOrders);
  *       '404':
  *         description: User not found.
  */
-router.route("/myorders/:id").get(client,admin,GetMyOrders);
+router.route("/myorders/:id").get(GetMyOrders);
 
 /**
  * @swagger
@@ -143,7 +143,7 @@ router.route("/myorders/:id").get(client,admin,GetMyOrders);
  *       '404':
  *         description: Order not found.
  */
-router.route("/orders/:id").get(client,getOrderById);
+router.route("/orders/:id").get(getOrderById);
 
 /**
  * @swagger
@@ -169,7 +169,7 @@ router.route("/orders/:id").get(client,getOrderById);
  *       '404':
  *         description: Order not found.
  */
-router.route("/orders/:id/pay").put(client,updateOrderToPaid);
+router.route("/orders/:id/pay").put(updateOrderToPaid);
 
 /**
  * @swagger
@@ -194,7 +194,7 @@ router.route("/orders/:id/pay").put(client,updateOrderToPaid);
  *       '404':
  *         description: Order not found.
  */
-router.route("/orders/:id/deliver").put(client,admin,updateOrderToDelivered);
+router.route("/orders/:id/deliver").put(updateOrderToDelivered);
 
 /**
  * @swagger

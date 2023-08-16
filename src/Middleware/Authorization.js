@@ -1,4 +1,4 @@
-import asyncHandler from 'express-async-handler';
+/*import asyncHandler from 'express-async-handler';
 import userSchema from '../Models/User.js';
 
 const client = asyncHandler(async (req, res, next) => {
@@ -29,4 +29,18 @@ const supplier = (req, res, next) => {
   }
 };
 
-export { client, admin, supplier }
+export { client, admin, supplier }*/
+
+import userSchema from '../Models/User.js';
+
+const authorizationMiddleware = (req, res, next) => {
+    //const user = req.userSchema; 
+  
+    if (req.userSchema.role === 'admin' || req.userSchema.role === 'fournisseur') {
+      next(); // User is authorized, continue to the next middleware/route handler
+    } else {
+      res.status(403).json({ message: 'Unauthorized' }); // User doesn't have the required role
+    }
+  };
+  
+  export default {authorizationMiddleware};

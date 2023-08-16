@@ -98,7 +98,7 @@ const storage = multer.diskStorage({
     },
 });
 
-const upload = multer({ storage: storage }).array("images",10);
+export const upload = multer({ storage: storage }).array("images",10);
 
 // Create a new product
 const createProduct = asyncHandler(async (req, res) => {
@@ -175,12 +175,12 @@ const createProductReview = asyncHandler(async (req, res) => {
 });
 
 
-export {
+export default {
     getProducts,
     getProductById,
     deleteProduct,
     createProduct,
     updateProduct,
     createProductReview,
-    upload,
+    upload
 };

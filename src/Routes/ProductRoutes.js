@@ -2,10 +2,11 @@
 import express from 'express';
 // import * as productController from "../Controllers/ProductControler"
  
-import { createProduct, createProductReview, deleteProduct, getProductById, getProducts, updateProduct } from '../Controllers/ProductController.js';
+//import { createProduct, createProductReview, deleteProduct, getProductById, getProducts, updateProduct } from '../Controllers/ProductController.js';
 import { upload } from '../Controllers/ProductController.js'; 
-import { client, admin,supplier} from '../Middleware/Authorization.js';
-
+//import { client, admin,supplier} from '../Middleware/Authorization.js';
+import ProductController from '../Controllers/ProductController.js';
+import authorizationMiddleware from '../Middleware/Authorization.js';
 const router = express.Router();
  
 
@@ -35,7 +36,7 @@ const router = express.Router();
  *         description: Internal server error.
  */
 
-router.route('/products').get(client,admin,supplier,getProducts);
+router.route('/products').get(ProductController.getProducts);
 
 /**
  * @swagger
@@ -112,8 +113,8 @@ router.route('/products').get(client,admin,supplier,getProducts);
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products/:id').post(createProduct);
-
+router.route('/products/:id').post(authorizationMiddleware,ProductController.createProduct);
+//router.post('/products/:id',authorizationMiddleware,ProductController.createProduct);
   
 /**
  * @swagger
@@ -198,7 +199,7 @@ router.route('/products/:id').post(createProduct);
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/api/products/:id/reviews').post(client,createProductReview);
+router.route('/api/products/:id/reviews').post(ProductController.createProductReview);
 
 /**
  * @swagger
@@ -278,7 +279,7 @@ router.route('/api/products/:id/reviews').post(client,createProductReview);
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products/:id').get(getProductById).delete(admin,supplier,deleteProduct);
+router.route('/products/:id').get(ProductController.getProductById).delete(ProductController.deleteProduct);
 
 /**
  * @swagger
@@ -359,9 +360,9 @@ router.route('/products/:id').get(getProductById).delete(admin,supplier,deletePr
  *                 error:
  *                   $ref: '#/components/schemas/Error'
  */
-router.route('/products/:id').put(admin,supplier,updateProduct);
+router.route('/products/:id').put(ProductController.updateProduct);
 
-router.post('/products/create', upload, createProduct);
+router.post('/products/create', upload, ProductController.createProduct);
 
 /**
  * @swagger
