@@ -53,7 +53,7 @@ export async function updateImage(req, res) {
 
 ///////////////////getUserInfo//////////////////
 
-export async function getUserInfo(req, res) {
+export default async function getUserInfo(req, res) {
   const id = req.params.id;
 
   try {
@@ -61,5 +61,14 @@ export async function getUserInfo(req, res) {
     return res.json(result);
   } catch (err) { 
      return res.status(500).json({ message:err });
+  }
+}
+///////////////////
+export async function getUserRole(userId) {
+  try {
+    const user = await getUserById(userId);
+    return user.role; // Return only the user's role
+  } catch (err) {
+    throw err;
   }
 }

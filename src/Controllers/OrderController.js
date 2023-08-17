@@ -1,20 +1,27 @@
 import asyncHandler from "express-async-handler";
 import Order from "../Models/OrderModel.js";
 import * as OrderService from "../Services/OrderService.js";
-
-// Create new order
+import userSchema from '../Models/User.js';
+//import getUserInfo from '../Controllers/ProfileController.js'
+import getUserRole from '../Controllers/ProfileController.js'
+////////////////////////////////// Create new order //////////////////////////////
 
 const addorderitems = asyncHandler(async (req, res) => {
-    // Here, the controller handles the request and response
-    try {
-      const createdOrder = await OrderService.createOrder(req.params.id, req.body);
-      res.status(201).json(createdOrder);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  });
+  try {
+    console.log("req.params:", req.params);
+    const { id: userId } = req.params; 
+    console.log("userId:", userId); 
+    const orderData = req.body; 
+    const userRole = await getUserRole(userId);
+    console.log("userRole:", userRole);
+    const createdOrder = await OrderService.createOrder(userId, orderData, userRole);
+    res.status(201).json(createdOrder);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
   
-    // get order by id
+    //////////////////////// get order by id //////////////////////////////////
     
 const getOrderById = asyncHandler(async (req, res) => {
     const order  = await Order.findById(req.params.id).populate("user","name email");
@@ -26,27 +33,32 @@ const getOrderById = asyncHandler(async (req, res) => {
     }
     
 });
-    // update order to paid
-    const updateOrderToPaid = asyncHandler(async (req, res) => {
-        try {
-          const updatedOrder = await OrderService.updateOrderToPaid(req.params.id, req.body);
-          res.json(updatedOrder);
-        } catch (error) {
-          res.status(404).json({ message: error.message });
-        }
-      });
+    //////////////////////////// Update order to paid //////////////////////////
+const updateOrderToPaid = asyncHandler(async (req, res) => {
+  try {
+    const { id: orderId } = req.params; 
+    const paymentData = req.body; 
+    const userRole = req.user.role; 
 
+    const updatedOrder = await OrderService.updateOrderToPaid(orderId, paymentData, userRole);
+    res.json(updatedOrder);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+});
 
-// update order to delivered
+///////////////////////// Update order to delivered //////////////////////////////////
 const updateOrderToDelivered = asyncHandler(async (req, res) => {
-    // Here, the controller handles the request and response
-    try {
-      const updatedOrder = await OrderService.updateOrderToDelivered(req.params.id);
-      res.json(updatedOrder);
-    } catch (error) {
-      res.status(404).json({ message: error.message });
-    }
-  });
+  try {
+    const { id: orderId } = req.params; 
+    const userRole = req.user.role; 
+
+    const updatedOrder = await OrderService.updateOrderToDelivered(orderId, userRole);
+    res.json(updatedOrder);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+});
 
     // get logged in user orders
 const GetMyOrders = asyncHandler(async (req, res) => {
@@ -61,5 +73,5 @@ const GetMyOrders = asyncHandler(async (req, res) => {
         res.json(orders);
         
     });
-
+    
 export {addorderitems,getOrderById,updateOrderToPaid,GetMyOrders,GetOrders,updateOrderToDelivered};

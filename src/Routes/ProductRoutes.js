@@ -272,7 +272,7 @@ router.route('/api/products/:id/reviews').post(ProductController.createProductRe
  *                   $ref: '#/components/schemas/Error'
  */
 router.route('/products/delete/:id').get(ProductController.getProductById).delete(ProductController.deleteProduct);
-//bla bla bla 
+
 /**
  * @swagger
  * /products/update/{id}:
