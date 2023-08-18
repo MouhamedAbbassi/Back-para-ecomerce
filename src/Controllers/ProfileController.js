@@ -63,12 +63,4 @@ export default async function getUserInfo(req, res) {
      return res.status(500).json({ message:err });
   }
 }
-///////////////////
-export async function getUserRole(userId) {
-  try {
-    const user = await getUserById(userId);
-    return user.role; // Return only the user's role
-  } catch (err) {
-    throw err;
-  }
-}
+

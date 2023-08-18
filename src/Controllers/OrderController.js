@@ -3,17 +3,16 @@ import Order from "../Models/OrderModel.js";
 import * as OrderService from "../Services/OrderService.js";
 import userSchema from '../Models/User.js';
 //import getUserInfo from '../Controllers/ProfileController.js'
-import getUserRole from '../Controllers/ProfileController.js'
+//import getUserRole from '../Controllers/ProfileController.js'
+
 ////////////////////////////////// Create new order //////////////////////////////
 
 const addorderitems = asyncHandler(async (req, res) => {
   try {
-    console.log("req.params:", req.params);
-    const { id: userId } = req.params; 
-    console.log("userId:", userId); 
+    const userId = req.params.id ;
     const orderData = req.body; 
-    const userRole = await getUserRole(userId);
-    console.log("userRole:", userRole);
+    const userData = await userSchema.findById(userId);
+    const userRole = await userData.role ;
     const createdOrder = await OrderService.createOrder(userId, orderData, userRole);
     res.status(201).json(createdOrder);
   } catch (error) {
@@ -23,22 +22,29 @@ const addorderitems = asyncHandler(async (req, res) => {
   
     //////////////////////// get order by id //////////////////////////////////
     
-const getOrderById = asyncHandler(async (req, res) => {
-    const order  = await Order.findById(req.params.id).populate("user","name email");
-    if(order){
-        res.json(order);
-    }else{
-        res.status(404);
-        throw new Error("Order Not found");
-    }
-    
-});
+    const getOrderById = asyncHandler(async (req, res, next) => {
+      const orderId = req.params.id;
+      const order = await OrderService.getOrderById(orderId);
+  
+      if (order) {
+          res.json(order);
+      } else {
+          res.status(404).json({message:'Order Not found',err : error.message});
+      }
+  });
+
     //////////////////////////// Update order to paid //////////////////////////
 const updateOrderToPaid = asyncHandler(async (req, res) => {
   try {
-    const { id: orderId } = req.params; 
+    const orderId = req.params.id; 
     const paymentData = req.body; 
-    const userRole = req.user.role; 
+     const order = await OrderService.getOrderById(orderId);
+     if (!order) {
+       return res.status(404).json({ message: "Order not found" });
+     }
+    const userId = order.user;
+    const userData = await userSchema.findById(userId);
+    const userRole = userData.role ;
 
     const updatedOrder = await OrderService.updateOrderToPaid(orderId, paymentData, userRole);
     res.json(updatedOrder);
@@ -51,8 +57,13 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
 const updateOrderToDelivered = asyncHandler(async (req, res) => {
   try {
     const { id: orderId } = req.params; 
-    const userRole = req.user.role; 
-
+    const order = await OrderService.getOrderById(orderId);
+     if (!order) {
+       return res.status(404).json({ message: "Order not found" });
+     }
+    const userId = order.user;
+    const userData = await userSchema.findById(userId);
+    const userRole = userData.role ;
     const updatedOrder = await OrderService.updateOrderToDelivered(orderId, userRole);
     res.json(updatedOrder);
   } catch (error) {
@@ -60,18 +71,43 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
   }
 });
 
-    // get logged in user orders
-const GetMyOrders = asyncHandler(async (req, res) => {
-    const orders  = await Order.find({user: req.params.id});
-    res.json(orders);
-    
-});
+    //////////////////////////////// get my orders //////////////////////////
+const getMyOrders = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.params.id;
 
-// get orders
+    const orders = await OrderService.getOrdersByUserId(userId);
+    res.json(orders);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+////////////////////////////////// get orders //////////////////////////
     const GetOrders = asyncHandler(async (req, res) => {
         const orders  = await Order.find({}).populate("user","id name");
         res.json(orders);
         
     });
     
-export {addorderitems,getOrderById,updateOrderToPaid,GetMyOrders,GetOrders,updateOrderToDelivered};
+////////////////////////////// delete an order by ID /////////////////////
+const deleteOrder = asyncHandler(async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const order = await OrderService.getOrderById(orderId);
+     if (!order) {
+       return res.status(404).json({ message: "Order not found" });
+     }
+    const userId = order.user;
+
+    const deletedOrder = await OrderService.deleteOrderById(orderId, userId);
+    if (deletedOrder) {
+      res.json({ message: "Order deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Order not found" });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+   
+export {addorderitems,getOrderById,updateOrderToPaid,getMyOrders,GetOrders,updateOrderToDelivered,deleteOrder};

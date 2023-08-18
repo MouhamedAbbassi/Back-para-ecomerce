@@ -1,6 +1,6 @@
 import Order from "../Models/OrderModel.js";
 import OrderAdmin from "../Models/OrderAdmin.js";
-
+import userSchema from "../Models/User.js";
 // ///////////////////////////////////////////Create new order///////////////////////////////////
 
 async function createOrder(userId, orderData, userRole) {
@@ -101,6 +101,47 @@ async function updateOrderToPaid(orderId, paymentData, userRole) {
 
   return order.save();
 }
+////////////////////////////// get Order By Id ////////////////////////////////////
+const getOrderById = async (orderId) => {
+  const orderExistsInOrderCollection = await Order.exists({ _id: orderId });
+  const orderExistsInOrderAdminCollection = await OrderAdmin.exists({ _id: orderId });
+
+  if (orderExistsInOrderCollection) {
+    return Order.findById(orderId).populate('user', 'name email');
+  } else if (orderExistsInOrderAdminCollection) {
+    return OrderAdmin.findById(orderId).populate('user', 'name email');
+  } else {
+    return null; // Order not found in either collection
+  }
+};
+
+////////////////////////////// get Order By user Id ////////////////////////////////////
+
+const getOrdersByUserId = async (userId) => {
+
+  const userData = await userSchema.findById(userId);
+  const userRole = userData.role ;
+  const isAdmin = userRole === "admin";
+
+  const OrderModel = isAdmin ? OrderAdmin : Order;
+
+  const orders = await OrderModel.find({ user: userId }).populate('user', 'name email');
+
+  return orders;
+};
+/////////////////////////////// Delete an order by ID ////////////////////////////////////
+
+const deleteOrderById = async (orderId, userId) => {
+  const userData = await userSchema.findById(userId);
+  const userRole = userData.role ;
+  const isAdmin = userRole === "admin";
+
+  const OrderModel = isAdmin ? OrderAdmin : Order;
+
+  const deletedOrder = await OrderModel.findByIdAndDelete(orderId);
+
+  return deletedOrder;
+};
 
 
-export{createOrder,updateOrderToDelivered,updateOrderToPaid}
+export{createOrder,updateOrderToDelivered,updateOrderToPaid,getOrderById,getOrdersByUserId,deleteOrderById};

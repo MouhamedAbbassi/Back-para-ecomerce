@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { addorderitems, GetMyOrders, getOrderById, GetOrders, updateOrderToPaid,updateOrderToDelivered } from "../Controllers/OrderController.js";
+import { addorderitems,getMyOrders, getOrderById, GetOrders, updateOrderToPaid,updateOrderToDelivered,deleteOrder } from "../Controllers/OrderController.js";
 //import { client, admin } from '../Middleware/Authorization.js';
 
 /**
@@ -118,7 +118,7 @@ router.route("/orders").get(GetOrders);
  *       '404':
  *         description: User not found.
  */
-router.route("/myorders/:id").get(GetMyOrders);
+router.route("/myorders/:id").get(getMyOrders);
 
 /**
  * @swagger
@@ -195,6 +195,9 @@ router.route("/orders/:id/pay").put(updateOrderToPaid);
  *         description: Order not found.
  */
 router.route("/orders/:id/deliver").put(updateOrderToDelivered);
+
+router.route("/orders/:id/delete").delete(deleteOrder);
+
 
 /**
  * @swagger

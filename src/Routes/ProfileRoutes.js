@@ -7,7 +7,7 @@ import { storage } from "../Controllers/ProfileController.js";
 const Upload=multer({storage:storage});
  import * as ProfileController from "../Controllers/ProfileController.js";
  import getUserInfo from "../Controllers/ProfileController.js";
- import getUserRole from "../Controllers/ProfileController.js";
+ //import getUserRole from "../Controllers/ProfileController.js";
 /**
  * @swagger
  * /profile/edit/{id}:
@@ -128,5 +128,5 @@ router.route("/profile/editPassword/:id")
 
 
 router.route("/profile/getUserInfo/:id").get(getUserInfo);
-router.route("/profile/getUserRole/:id").get(getUserRole);
+//router.route("/profile/getUserRole/:id").get(getUserRole);
 export default router;
